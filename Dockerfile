@@ -9,6 +9,7 @@ ENV ONESSL_VERSION 0.14.0
 ENV KTAIL_VERSION 1.0.0
 ENV KUBECTL_VERSION 1.15.2
 ENV STERN_VERSION 1.12.1
+ENV K9S_VERSION 0.21.7
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 
@@ -26,7 +27,7 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     cp linux-amd64/helm /usr/local/bin && \
     rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
     rm -fr linux-amd64/ && \
-    curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/${ONESSL_VERSION}/onessl-linux-amd64 && \
+    curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v${ONESSL_VERSION}/onessl-linux-amd64 && \
     chmod +x onessl && \
     mv onessl /usr/local/bin/ && \
     curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-amd64 -o /usr/local/bin/ktail && \
@@ -39,6 +40,14 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     curl -sfL https://github.com/grosser/stern/releases/download/${STERN_VERSION}/stern-${STERN_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
     chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
+
+# Install k9s 
+# @see https://github.com/derailed/k9s
+RUN wget -O k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
+    tar -xzf k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+    rm k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+    mv k9s /usr/local/bin/k9s && \
+    chmod +x /usr/local/bin/k9s
 
 # Install Velero.
 RUN mkdir -p /velero && \
