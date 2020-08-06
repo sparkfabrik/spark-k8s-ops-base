@@ -1,13 +1,14 @@
-FROM google/cloud-sdk:257.0.0-alpine
+FROM google/cloud-sdk:304.0.0-alpine
 
 # Default env vars.
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 ENV HELM_VERSION 2.14.3
-ENV TERRAFORM_VERSION 0.11.14
+ENV TERRAFORM_VERSION 0.12.29
 ENV VELERO_VERSION 1.0.0
-ENV ONESSL_VERSION 0.12.0
-ENV KTAIL_VERSION 0.11.0
+ENV ONESSL_VERSION 0.14.0
+ENV KTAIL_VERSION 1.0.0
 ENV KUBECTL_VERSION 1.15.2
+ENV STERN_VERSION 1.12.1
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 
@@ -35,6 +36,8 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
     curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail && \
+    curl -sfL https://github.com/grosser/stern/releases/download/${STERN_VERSION}/stern-${STERN_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
+    chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
 
 # Install Velero.
@@ -51,7 +54,8 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "export TERM=xterm" >> /etc/profile \
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "alias k=\"kubectl\"" >> /etc/profile \
-    && echo "alias events=\"kubectl get events -w --all-namespaces\"" >> /etc/profile \
+    && echo "alias events=\"kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp\"" >> /etc/profile \
+    && echo "alias watch-events=\"kubectl get events -w --all-namespaces\"" >> /etc/profile \
     && echo "alias nodes=\"kubectl get nodes\"" >> /etc/profile \
     && echo "alias top-nodes=\"kubectl top nodes\"" >> /etc/profile \
     && echo "alias pods=\"kubectl get pod --all-namespaces\"" >> /etc/profile \
