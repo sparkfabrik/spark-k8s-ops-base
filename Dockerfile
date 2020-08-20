@@ -3,6 +3,7 @@ FROM google/cloud-sdk:304.0.0-alpine
 # Default env vars.
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 ENV HELM_VERSION 2.14.3
+ENV HELM3_VERSION 3.3.0
 ENV TERRAFORM_VERSION 0.12.29
 ENV VELERO_VERSION 1.0.0
 ENV ONESSL_VERSION 0.14.0
@@ -22,10 +23,17 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
     chmod +x /usr/local/bin/terraform && \
-    wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://kubernetes-helm.storage.googleapis.com/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    # Install Helm 2:
+    wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz  && \
     cp linux-amd64/helm /usr/local/bin && \
     rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    rm -fr linux-amd64/ && \
+    # Install Helm 3:
+    wget -O helm-v${HELM3_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
+    tar -xzf helm-v${HELM3_VERSION}-linux-amd64.tar.gz  && \
+    cp linux-amd64/helm /usr/local/bin/helm3 && \
+    rm helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
     rm -fr linux-amd64/ && \
     curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v${ONESSL_VERSION}/onessl-linux-amd64 && \
     chmod +x onessl && \
