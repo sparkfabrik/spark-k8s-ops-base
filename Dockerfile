@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:304.0.0-alpine
+FROM google/cloud-sdk:306.0.0-alpine
 
 # Default env vars.
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
