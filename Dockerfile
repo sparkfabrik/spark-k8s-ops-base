@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:306.0.0-alpine
+FROM google/cloud-sdk:308.0.0-alpine
 
 # Default env vars.
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
@@ -23,18 +23,6 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
     chmod +x /usr/local/bin/terraform && \
-    # Install Helm 2:
-    wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    tar -xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz  && \
-    cp linux-amd64/helm /usr/local/bin && \
-    rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    rm -fr linux-amd64/ && \
-    # Install Helm 3:
-    wget -O helm-v${HELM3_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
-    tar -xzf helm-v${HELM3_VERSION}-linux-amd64.tar.gz  && \
-    cp linux-amd64/helm /usr/local/bin/helm3 && \
-    rm helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
-    rm -fr linux-amd64/ && \
     curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v${ONESSL_VERSION}/onessl-linux-amd64 && \
     chmod +x onessl && \
     mv onessl /usr/local/bin/ && \
@@ -48,6 +36,22 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     curl -sfL https://github.com/grosser/stern/releases/download/${STERN_VERSION}/stern-${STERN_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
     chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
+
+    # Install Helm 2:
+RUN wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    tar -xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz  && \
+    cp linux-amd64/helm /usr/local/bin && \
+    rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
+    rm -fr linux-amd64/ && \
+    # Install Helm 3:
+    wget -O helm-v${HELM3_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
+    tar -xzf helm-v${HELM3_VERSION}-linux-amd64.tar.gz  && \
+    cp linux-amd64/helm /usr/local/bin/helm3 && \
+    rm helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
+    rm -fr linux-amd64/ && \
+    # Install Helm 3 plugin to migrate Tiller releases from Helm 2 to Helm 3.
+    # @see https://github.com/helm/helm-2to3 for documentation.
+    helm3 plugin install https://github.com/helm/helm-2to3
 
 # Install k9s 
 # @see https://github.com/derailed/k9s
