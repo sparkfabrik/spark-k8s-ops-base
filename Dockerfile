@@ -11,6 +11,7 @@ ENV KTAIL_VERSION 1.0.0
 ENV KUBECTL_VERSION 1.15.2
 ENV STERN_VERSION 1.12.1
 ENV K9S_VERSION 0.21.7
+ENV KUBENT_VERSION 0.3.2
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 
@@ -69,6 +70,11 @@ RUN mkdir -p /velero && \
     cp velero-v${VELERO_VERSION}-linux-amd64/velero /usr/local/bin/velero && \
     chmod +x /usr/local/bin/velero && \
     rm -rf velero-v${VELERO_VERSION}-linux-amd64.tar.gz
+
+# Install Kube No Trouble - kubent.
+# https://github.com/doitintl/kube-no-trouble
+RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/kubent && \
+    chmod +x /usr/local/bin/kubent
 
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
     && echo "export PATH=/google-cloud-sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
