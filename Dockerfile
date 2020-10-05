@@ -73,7 +73,7 @@ RUN mkdir -p /velero && \
 
 # Install Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble
-RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/{KUBENT_VERSION}/kubent-{KUBENT_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/kubent && \
+RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
