@@ -1,17 +1,22 @@
-FROM google/cloud-sdk:308.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:342.0.0-alpine
 
 # Default env vars.
+ENV KUBECTL_VERSION 1.18.19
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
-ENV HELM_VERSION 2.14.3
-ENV HELM3_VERSION 3.3.0
+ENV HELM_VERSION 3.3.0
 ENV TERRAFORM_VERSION 0.12.29
+# https://github.com/vmware-tanzu/velero/releases
 ENV VELERO_VERSION 1.0.0
+# https://github.com/kubepack/onessl/releases
 ENV ONESSL_VERSION 0.14.0
-ENV KTAIL_VERSION 1.0.0
-ENV KUBECTL_VERSION 1.15.2
-ENV STERN_VERSION 1.12.1
-ENV K9S_VERSION 0.21.7
-ENV KUBENT_VERSION 0.3.2
+# https://github.com/atombender/ktail/releases
+ENV KTAIL_VERSION 1.0.1
+# https://github.com/stern/stern/releases
+ENV STERN_VERSION 1.18.0
+# https://github.com/derailed/k9s/releases
+ENV K9S_VERSION 0.24.10
+# https://github.com/doitintl/kube-no-trouble/releases1
+ENV KUBENT_VERSION 0.4.0
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 
@@ -34,33 +39,19 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
     curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail && \
-    curl -sfL https://github.com/grosser/stern/releases/download/${STERN_VERSION}/stern-${STERN_VERSION}-linux-amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
+    curl -sfL https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
     chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
 
-    # Install Helm 2:
+    # Install Helm 3:
 RUN wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz  && \
-    cp linux-amd64/helm /usr/local/bin && \
+    cp linux-amd64/helm /usr/local/bin/helm && \
     rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    rm -fr linux-amd64/ && \
-    # Install Helm 3:
-    wget -O helm-v${HELM3_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
-    tar -xzf helm-v${HELM3_VERSION}-linux-amd64.tar.gz  && \
-    cp linux-amd64/helm /usr/local/bin/helm3 && \
-    rm helm-v${HELM3_VERSION}-linux-amd64.tar.gz && \
     rm -fr linux-amd64/ && \
     # Install Helm 3 plugin to migrate Tiller releases from Helm 2 to Helm 3.
     # @see https://github.com/helm/helm-2to3 for documentation.
-    helm3 plugin install https://github.com/helm/helm-2to3
-
-# Install k9s 
-# @see https://github.com/derailed/k9s
-RUN wget -O k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
-    tar -xzf k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
-    rm k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
-    mv k9s /usr/local/bin/k9s && \
-    chmod +x /usr/local/bin/k9s
+    helm plugin install https://github.com/helm/helm-2to3
 
 # Install Velero.
 RUN mkdir -p /velero && \
@@ -70,6 +61,14 @@ RUN mkdir -p /velero && \
     cp velero-v${VELERO_VERSION}-linux-amd64/velero /usr/local/bin/velero && \
     chmod +x /usr/local/bin/velero && \
     rm -rf velero-v${VELERO_VERSION}-linux-amd64.tar.gz
+
+# Install k9s
+# @see https://github.com/derailed/k9s
+RUN wget -O k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+    tar -xzf k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+    rm k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+    mv k9s /usr/local/bin/k9s && \
+    chmod +x /usr/local/bin/k9s
 
 # Install Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble
@@ -90,4 +89,5 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "alias jobs=\"kubectl get jobs --all-namespaces\"" >> /etc/profile \
     && echo "alias cronjobs=\"kubectl get cronjobs --all-namespaces\"" >> /etc/profile \
     && echo "alias ingress=\"kubectl get ingress --all-namespaces\"" >> /etc/profile \
-    && echo "alias services=\"kubectl get services --all-namespaces\"" >> /etc/profile
+    && echo "alias services=\"kubectl get services --all-namespaces\"" >> /etc/profile \
+    && echo "alias helm3=\"helm\"" >> /etc/profile
