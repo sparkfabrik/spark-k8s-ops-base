@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/cloud-sdk:342.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:347.0.0-alpine
 
 # Default env vars.
 ENV KUBECTL_VERSION 1.18.19
@@ -12,16 +12,16 @@ ENV ONESSL_VERSION 0.14.0
 # https://github.com/atombender/ktail/releases
 ENV KTAIL_VERSION 1.0.1
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.18.0
+ENV STERN_VERSION 1.19.0
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.24.10
+ENV K9S_VERSION 0.24.12
 # https://github.com/doitintl/kube-no-trouble/releases1
 ENV KUBENT_VERSION 0.4.0
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 
 # Install additional components.
-RUN apk --update add vim tmux curl wget less make bash bash-completion util-linux pciutils usbutils coreutils binutils findutils grep gettext docker ncurses jq && \
+RUN apk --update add vim tmux curl wget less make bash bash-completion util-linux pciutils usbutils coreutils binutils findutils grep gettext docker ncurses jq bat && \
     gcloud components install app-engine-java beta && \
     curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl && \
@@ -43,15 +43,12 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
 
-    # Install Helm 3:
+# Install Helm 3:
 RUN wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz  && \
     cp linux-amd64/helm /usr/local/bin/helm && \
     rm helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
-    rm -fr linux-amd64/ && \
-    # Install Helm 3 plugin to migrate Tiller releases from Helm 2 to Helm 3.
-    # @see https://github.com/helm/helm-2to3 for documentation.
-    helm plugin install https://github.com/helm/helm-2to3
+    rm -fr linux-amd64/
 
 # Install Velero.
 RUN mkdir -p /velero && \
@@ -90,4 +87,6 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "alias cronjobs=\"kubectl get cronjobs --all-namespaces\"" >> /etc/profile \
     && echo "alias ingress=\"kubectl get ingress --all-namespaces\"" >> /etc/profile \
     && echo "alias services=\"kubectl get services --all-namespaces\"" >> /etc/profile \
+    && echo "alias kdp-error=\"kubectl get pods | grep Error | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
+    && echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
     && echo "alias helm3=\"helm\"" >> /etc/profile
