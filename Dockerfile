@@ -1,5 +1,7 @@
 FROM gcr.io/google.com/cloudsdktool/cloud-sdk:347.0.0-alpine
 
+LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
+
 # Default env vars.
 ENV KUBECTL_VERSION 1.18.19
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
@@ -61,9 +63,9 @@ RUN mkdir -p /velero && \
 
 # Install k9s
 # @see https://github.com/derailed/k9s
-RUN wget -O k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
-    tar -xzf k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
-    rm k9s_v${K9S_VERSION}_Linux_x86_64.tar.gz && \
+RUN wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
+    tar -xzf k9s_Linux_x86_64.tar.gz && \
+    rm k9s_Linux_x86_64.tar.gz && \
     mv k9s /usr/local/bin/k9s && \
     chmod +x /usr/local/bin/k9s
 
