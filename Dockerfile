@@ -41,9 +41,14 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
     curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail && \
-    curl -sfL https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz | tar -zxO > /usr/local/bin/stern && \
-    chmod +x /usr/local/bin/stern && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
+
+# Install stern
+RUN wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O stern_${STERN_VERSION}_linux_amd64.tar.gz -q && \
+    tar -xvf stern_${STERN_VERSION}_linux_amd64.tar.gz && \
+    mv stern_${STERN_VERSION}_linux_amd64/stern /usr/local/bin/stern && \
+    rm -r stern_${STERN_VERSION}_linux_amd64 && \
+    rm stern_${STERN_VERSION}_linux_amd64.tar.gz
 
 # Install Helm 3:
 RUN wget -O helm-v${HELM_VERSION}-linux-amd64.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz && \
