@@ -21,9 +21,13 @@ ENV K9S_VERSION 0.24.12
 ENV KUBENT_VERSION 0.4.0
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
+# https://github.com/docker/compose/releases
+# https://docs.docker.com/compose/install/#install-compose-on-linux-systems
+ENV COMPOSE_VERSION 1.29.2
+
 
 # Install additional components.
-RUN apk --update add vim tmux curl wget less make bash bash-completion util-linux pciutils usbutils coreutils binutils findutils grep gettext docker ncurses jq bat && \
+RUN apk --update add vim tmux curl wget less make bash bash-completion util-linux pciutils usbutils coreutils binutils findutils grep gettext docker ncurses jq bat py-pip python3-dev openssl libffi-dev openssl-dev gcc libc-dev rust cargo && \
     gcloud components install app-engine-java beta && \
     curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl && \
     chmod +x /usr/local/bin/kubectl && \
@@ -41,6 +45,7 @@ RUN apk --update add vim tmux curl wget less make bash bash-completion util-linu
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
     curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail && \
+    pip install "docker-compose==${COMPOSE_VERSION}" && \
     echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
 
 # Install stern
