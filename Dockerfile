@@ -6,7 +6,7 @@ LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-o
 ENV KUBECTL_VERSION 1.18.19
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 ENV HELM_VERSION 3.3.0
-ENV TERRAFORM_VERSION 0.12.29
+ENV TERRAFORM_VERSION 0.12.31
 # https://github.com/vmware-tanzu/velero/releases
 ENV VELERO_VERSION 1.0.0
 # https://github.com/kubepack/onessl/releases
@@ -14,11 +14,11 @@ ENV ONESSL_VERSION 0.14.0
 # https://github.com/atombender/ktail/releases
 ENV KTAIL_VERSION 1.0.1
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.19.0
+ENV STERN_VERSION 1.20.1
 # https://github.com/derailed/k9s/releases
 ENV K9S_VERSION 0.24.12
 # https://github.com/doitintl/kube-no-trouble/releases1
-ENV KUBENT_VERSION 0.4.0
+ENV KUBENT_VERSION 0.5.0
 # NOTE: you can check which is the latest stable kubeclt version with:
 # curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt
 # https://github.com/docker/compose/releases
