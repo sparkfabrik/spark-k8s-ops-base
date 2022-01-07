@@ -10,4 +10,4 @@ production-cli: build-docker-image
 	-it sparkfabrik/ops-base:latest bash -il
 
 build-docker-image:
-	docker build -t sparkfabrik/ops-base:latest -f Dockerfile .
+	docker buildx build --platform linux/arm64 -t sparkfabrik/ops-base:latest -f Dockerfile .
