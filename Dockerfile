@@ -52,11 +52,12 @@ RUN pip install "docker-compose==${COMPOSE_VERSION}" && \
 # Install stern
 # https://github.com/stern/stern/releases
 ENV STERN_VERSION 1.21.0
-RUN wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -O stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -q && \
+RUN mkdir /tmp/stern && cd /tmp/stern && \
+    curl -LO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
-    mv stern_${STERN_VERSION}_linux_${TARGETARCH}/stern /usr/local/bin/stern && \
-    rm -r stern_${STERN_VERSION}_linux_${TARGETARCH} && \
-    rm stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz
+    mv stern /usr/local/bin/stern && \
+    rm stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    rm -rf /tmp/stern
 
 # Install Helm 3:
 ENV HELM_VERSION 3.7.2
