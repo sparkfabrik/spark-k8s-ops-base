@@ -24,7 +24,7 @@ jobs:
 
       - name: Build images
         run: |
-          docker buildx build --load . --tag $IMAGE_NAME:latest --build-arg user=root
+          docker buildx build --load . --tag $IMAGE_NAME:latest
 
   deploy:
     needs: test
