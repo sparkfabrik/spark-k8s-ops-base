@@ -10,4 +10,9 @@ production-cli: build-docker-image
 	-it sparkfabrik/ops-base:latest bash -il
 
 build-docker-image:
-	docker buildx build --platform linux/arm64 -t sparkfabrik/ops-base:latest -f Dockerfile .
+	@case "$$( uname -m )" in \
+		arm*) $(eval BUILDX_PLATFORM := linux/arm64) ;; \
+		*) $(eval BUILDX_PLATFORM := linux/amd64) ;; \
+	esac
+	@echo "The build target platform is ${BUILDX_PLATFORM}"
+	docker buildx build --load --platform ${BUILDX_PLATFORM} -t sparkfabrik/ops-base:latest -f Dockerfile .
