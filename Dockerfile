@@ -94,6 +94,19 @@ ENV KUBENT_VERSION 0.5.0
 RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO > /usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
+# Install Cert Manager CLI - cmctl
+# https://github.com/jetstack/cert-manager/releases
+ENV CMCTL_VERSION 1.6.1
+RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
+    tar -xzf cmctl.tar.gz && \
+    rm cmctl.tar.gz && \
+    mv cmctl /usr/local/bin/cmctl && \
+    chmod +x /usr/local/bin/cmctl
+
+# Copy alias functions
+COPY bash_functions.sh /etc/profile.d/bash_functions.sh
+RUN chmod +x /etc/profile.d/bash_functions.sh
+
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
     && echo "export PATH=/google-cloud-sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
     && echo "export TERM=xterm" >> /etc/profile \
@@ -111,4 +124,6 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "alias services=\"kubectl get services --all-namespaces\"" >> /etc/profile \
     && echo "alias kdp-error=\"kubectl get pods | grep Error | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
     && echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
-    && echo "alias helm3=\"helm\"" >> /etc/profile
+    && echo "alias helm3=\"helm\"" >> /etc/profile \
+    && echo "source <(helm completion bash)" >> /etc/profile \
+    && echo "source <(cmctl completion bash)" >> /etc/profile
