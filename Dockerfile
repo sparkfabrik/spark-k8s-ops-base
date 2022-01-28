@@ -69,7 +69,7 @@ RUN wget -O helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh
 
 # Install Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION 1.0.0
+ENV VELERO_VERSION 1.7.0
 RUN mkdir -p /velero && \
     cd /velero && \
     wget https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -126,4 +126,5 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
     && echo "alias helm3=\"helm\"" >> /etc/profile \
     && echo "source <(helm completion bash)" >> /etc/profile \
+    && echo "source <(velero completion bash)" >> /etc/profile \
     && echo "source <(cmctl completion bash)" >> /etc/profile
