@@ -16,14 +16,14 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 RUN apk --update add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat py-pip python3-dev \
-    openssl libffi-dev openssl-dev gcc libc-dev rust cargo && \
+    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git && \
     gcloud components install app-engine-java beta
 
-ENV KUBECTL_VERSION 1.23.1
+ENV KUBECTL_VERSION 1.23.3
 RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
-ENV TERRAFORM_VERSION 0.12.31
+ENV TERRAFORM_VERSION 1.1.5
 RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
@@ -69,7 +69,7 @@ RUN wget -O helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh
 
 # Install Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION 1.7.0
+ENV VELERO_VERSION 1.7.1
 RUN mkdir -p /velero && \
     cd /velero && \
     wget https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -96,19 +96,34 @@ RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KU
 
 # Install Cert Manager CLI - cmctl
 # https://github.com/jetstack/cert-manager/releases
-ENV CMCTL_VERSION 1.6.1
+ENV CMCTL_VERSION 1.7.0
 RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
     tar -xzf cmctl.tar.gz && \
     rm cmctl.tar.gz && \
     mv cmctl /usr/local/bin/cmctl && \
     chmod +x /usr/local/bin/cmctl
 
+# Install Krew - kubectl plugin manager
+# https://krew.sigs.k8s.io/docs/user-guide/setup/install/
+RUN set -x; cd "$(mktemp -d)" && \
+    OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
+    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
+    KREW="krew-${OS}_${ARCH}" && \
+    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
+    tar zxvf "${KREW}.tar.gz" && \
+    ./"${KREW}" install krew
+
+ENV PATH "/root/.krew/bin:$PATH"
+
+# Install kube-capacity using krew
+RUN kubectl krew install resource-capacity
+
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
 
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
-    && echo "export PATH=/google-cloud-sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
+    && echo "export PATH=/google-cloud-sdk/bin:/root/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
     && echo "export TERM=xterm" >> /etc/profile \
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "alias k=\"kubectl\"" >> /etc/profile \
@@ -125,6 +140,7 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "alias kdp-error=\"kubectl get pods | grep Error | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
     && echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
     && echo "alias helm3=\"helm\"" >> /etc/profile \
+    && echo "alias kube-capacity=\"kubectl resource-capacity\"" >> /etc/profile \
     && echo "source <(helm completion bash)" >> /etc/profile \
     && echo "source <(velero completion bash)" >> /etc/profile \
     && echo "source <(cmctl completion bash)" >> /etc/profile
