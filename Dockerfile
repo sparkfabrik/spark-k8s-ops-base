@@ -29,6 +29,10 @@ RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAF
     mv terraform /usr/local/bin/terraform && \
     chmod +x /usr/local/bin/terraform
 
+# Install tflint Terraform Linter
+# https://github.com/terraform-linters/tflint
+RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
 # https://github.com/kubepack/onessl/releases
 ENV ONESSL_VERSION 0.14.0
 RUN curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v${ONESSL_VERSION}/onessl-linux-${TARGETARCH} && \
