@@ -33,7 +33,7 @@ RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAF
 # https://github.com/terraform-linters/tflint
 RUN curl -o /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh && \
     chmod +x /tmp/tflint_install.sh && \
-    /tmp/tflint_install.sh &&
+    /tmp/tflint_install.sh && \
     rm -f /tmp/tflint_install.sh
 
 # https://github.com/kubepack/onessl/releases
