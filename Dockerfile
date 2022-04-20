@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/cloud-sdk:367.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:382.0.0-alpine
 
 LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
 
@@ -16,8 +16,10 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 RUN apk --update add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat py-pip python3-dev \
-    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git && \
-    gcloud components install app-engine-java beta
+    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip
+
+# Add additional components to Gcloud SDK.
+RUN gcloud components install app-engine-java beta
 
 ENV KUBECTL_VERSION 1.23.3
 RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
