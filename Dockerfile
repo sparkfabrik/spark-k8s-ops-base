@@ -29,7 +29,8 @@ ENV TERRAFORM_VERSION 1.1.5
 RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
-    chmod +x /usr/local/bin/terraform
+    chmod +x /usr/local/bin/terraform && \
+    rm -f /tmp/terraform.zip
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint
