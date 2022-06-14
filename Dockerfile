@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/cloud-sdk:382.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:389.0.0-alpine
 
 LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
 
@@ -19,7 +19,10 @@ RUN apk --update add vim tmux curl wget less make bash \
     openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip
 
 # Add additional components to Gcloud SDK.
-RUN gcloud components install app-engine-java beta
+RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
+
+# Use the gke-auth-plugin to authenticate to the GKE cluster.
+ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
 
 ENV KUBECTL_VERSION 1.23.3
 RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
