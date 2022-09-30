@@ -26,6 +26,28 @@ jobs:
         run: |
           docker buildx build --load . --tag $IMAGE_NAME:latest
 
+  Trivy-Scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Trivy vulnerability scanner in docker mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '$IMAGE_NAME:latest'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-docker.sarif'
+          severity: 'CRITICAL'
+          timeout: '15m'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results-docker.sarif'
+
   deploy:
     needs: test
     runs-on: ubuntu-latest

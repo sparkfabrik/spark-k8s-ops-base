@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:404.0.0-alpine
+FROM eu.gcr.io/google.com/cloudsdktool/cloud-sdk:404.0.0-alpine
 
 LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
 
@@ -156,5 +156,6 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "source <(velero completion bash)" >> /etc/profile
 
-# Clean up apk cache
-RUN rm -rf /var/cache/apk/*
+# Clean up caches.
+RUN rm -rf /var/cache/apk/* && \
+    rm -rf /root/.cargo
