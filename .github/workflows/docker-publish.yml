@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ops-base
 
 jobs:
-  test:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,6 +27,7 @@ jobs:
           docker buildx build --load . --tag $IMAGE_NAME:latest
 
   Trivy-Scan:
+    needs: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -48,8 +49,8 @@ jobs:
         with:
           sarif_file: 'trivy-results-docker.sarif'
 
-  deploy:
-    needs: [test, Trivy-Scan]
+  Deploy:
+    needs: [Build, Trivy-Scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
 
