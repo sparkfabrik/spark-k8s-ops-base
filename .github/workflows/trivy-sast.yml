@@ -1,0 +1,44 @@
+# REFS: https://github.com/aquasecurity/trivy-sarif-demo/blob/master/.github/workflows/scan.yml
+name: "Code Scanning"
+
+on:
+  push:
+    branches:
+    - 'master'
+  pull_request:
+    branches:
+    - 'master'
+  schedule:
+    - cron: '0 0 * * 1'
+
+env:
+  IMAGE_NAME: ops-base
+
+jobs:
+  Trivy-Scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build image
+        run: |
+          docker buildx build --load . --tag $IMAGE_NAME:latest
+
+      - name: Run Trivy vulnerability scanner in docker mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: $IMAGE_NAME:latest
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results-docker.sarif'
+          severity: 'CRITICAL'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results-docker.sarif'
