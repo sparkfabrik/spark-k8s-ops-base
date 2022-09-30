@@ -13,7 +13,7 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 
 # Install additional components.
-RUN apk --update add vim tmux curl wget less make bash \
+RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat py-pip python3-dev \
     openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip
@@ -127,6 +127,7 @@ RUN set -x; cd "$(mktemp -d)" && \
     KREW="krew-${OS}_${ARCH}" && \
     curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
     tar zxvf "${KREW}.tar.gz" && \
+    rm "${KREW}.tar.gz" && \
     ./"${KREW}" install krew
 
 ENV PATH "/root/.krew/bin:$PATH"
@@ -160,3 +161,6 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(helm completion bash)" >> /etc/profile \
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "source <(velero completion bash)" >> /etc/profile
+
+# Clean up apk cache
+RUN rm -rf /var/cache/apk/*
