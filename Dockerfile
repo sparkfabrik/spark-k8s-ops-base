@@ -43,12 +43,6 @@ RUN curl -o /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-l
     /tmp/tflint_install.sh && \
     rm -f /tmp/tflint_install.sh
 
-# https://github.com/kubepack/onessl/releases
-ENV ONESSL_VERSION 0.14.0
-RUN curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v${ONESSL_VERSION}/onessl-linux-${TARGETARCH} && \
-    chmod +x onessl && \
-    mv onessl /usr/local/bin/
-
 # https://github.com/atombender/ktail/releases
 ENV KTAIL_VERSION 1.2.1
 RUN curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
