@@ -11,10 +11,11 @@ env:
   IMAGE_NAME: ops-base
 
 jobs:
-  Build:
+  TestAndScan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -26,20 +27,11 @@ jobs:
         run: |
           docker buildx build --load . --tag $IMAGE_NAME:latest
 
-  Trivy-Scan:
-    needs: Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Run Trivy vulnerability scanner in docker mode
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'ops-base:latest'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          image-ref: '${{ env.IMAGE_NAME }}:latest'
+          format: 'sarif'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'
@@ -50,7 +42,7 @@ jobs:
           sarif_file: 'trivy-results-docker.sarif'
 
   Deploy:
-    needs: [Build, Trivy-Scan]
+    needs: TestAndScan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
 
