@@ -31,12 +31,12 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.IMAGE_NAME }}:latest'
-          format: 'template'
+          format: 'sarif'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
 
       - name: Upload Trivy scan results to GitHub Security tab
