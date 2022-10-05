@@ -9,6 +9,9 @@ on:
 
 env:
   IMAGE_NAME: ops-base
+  # The following env var can be used to configure the report
+  # refs: https://github.com/aquasecurity/trivy-action/issues/142#issuecomment-1203093773
+  # SARIF_ARGS: --severity CRITICAL --timeout 15m
 
 jobs:
   TestAndScan:
@@ -27,12 +30,26 @@ jobs:
         run: |
           docker buildx build --load . --tag $IMAGE_NAME:latest
 
+      - name: Run Trivy vulnerability scanner in config mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          format: 'sarif'
+          output: 'trivy-results-config.sarif'
+          severity: 'CRITICAL'
+          exit-code: '0'
+          ignore-unfixed: true
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results-config.sarif'
+
       - name: Run Trivy vulnerability scanner in docker mode
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.IMAGE_NAME }}:latest'
           format: 'sarif'
-          template: '@/contrib/sarif.tpl'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'

@@ -1,5 +1,4 @@
-# REFS: https://github.com/aquasecurity/trivy-sarif-demo/blob/master/.github/workflows/scan.yml
-name: "Code Scanning"
+name: "Image Scanning"
 
 on:
   schedule:
@@ -15,7 +14,6 @@ jobs:
         with:
           image-ref: 'ghcr.io/sparkfabrik/ops-base:latest'
           format: 'sarif'
-          template: '@/contrib/sarif.tpl'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'
