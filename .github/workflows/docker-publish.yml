@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ops-base
   # The following env var can be used to configure the report
   # refs: https://github.com/aquasecurity/trivy-action/issues/142#issuecomment-1203093773
-  SARIF_ARGS: --severity HIGH --timeout 15m
+  SARIF_ARGS: "--severity CRITICAL"
 
 jobs:
   TestAndScan:
