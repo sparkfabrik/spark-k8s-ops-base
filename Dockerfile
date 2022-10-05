@@ -1,4 +1,4 @@
-FROM eu.gcr.io/google.com/cloudsdktool/cloud-sdk:404.0.0-alpine
+FROM eu.gcr.io/google.com/cloudsdktool/cloud-sdk:405.0.0-alpine
 
 LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
 
@@ -69,7 +69,11 @@ RUN mkdir /tmp/stern && cd /tmp/stern && \
 
 # Install Helm 3:
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION 3.10.0
+# The 3.8.2 is the latest version that works with EKS `client.authentication.k8s.io/v1alpha1` apiVersion.
+# This apiVersion is automatically configured by aws-cli, using `aws eks update-kubeconfig` command,
+# which is at its latest version.
+# Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
+ENV HELM_VERSION 3.8.2
 RUN wget -O helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
     cp linux-${TARGETARCH}/helm /usr/local/bin/helm && \
