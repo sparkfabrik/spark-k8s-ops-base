@@ -107,14 +107,14 @@ ENV KUBENT_VERSION 0.5.1
 RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO > /usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
-# Install Cert Manager CLI - cmctl
-# https://github.com/jetstack/cert-manager/releases
-ENV CMCTL_VERSION 1.9.1
-RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
-    tar -xzf cmctl.tar.gz && \
-    rm cmctl.tar.gz && \
-    mv cmctl /usr/local/bin/cmctl && \
-    chmod +x /usr/local/bin/cmctl
+## Install Cert Manager CLI - cmctl
+## https://github.com/jetstack/cert-manager/releases
+# ENV CMCTL_VERSION 1.9.1
+# RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
+#     tar -xzf cmctl.tar.gz && \
+#     rm cmctl.tar.gz && \
+#     mv cmctl /usr/local/bin/cmctl && \
+#     chmod +x /usr/local/bin/cmctl
 
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
