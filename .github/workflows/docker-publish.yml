@@ -44,6 +44,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results-config.sarif'
+          category: Configuration
 
       - name: Run Trivy vulnerability scanner in docker mode
         uses: aquasecurity/trivy-action@master
@@ -60,6 +61,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-results-docker.sarif'
+          category: Image
 
   Deploy:
     needs: TestAndScan
