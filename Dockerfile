@@ -1,6 +1,6 @@
 FROM eu.gcr.io/google.com/cloudsdktool/cloud-sdk:405.0.0-alpine
 
-LABEL org.opencontainers.image.source https://github.com/sparkfabrik/spark-k8s-ops-base
+LABEL org.opencontainers.image.source=https://github.com/sparkfabrik/spark-k8s-ops-base
 
 # Build target arch passed by BuildKit
 ARG TARGETARCH
@@ -13,10 +13,13 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 
 # Install additional components.
-RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
-    bash-completion util-linux pciutils usbutils coreutils binutils \
-    findutils grep gettext docker ncurses jq bat py-pip python3-dev \
-    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip
+RUN apk update && \
+    apk upgrade && \
+    apk add vim tmux curl wget less make bash bash-completion \
+      util-linux pciutils usbutils coreutils binutils \
+      findutils grep gettext docker docker-compose ncurses\
+      jq bat openssl libffi-dev openssl-dev libc-dev \
+      git unzip
 
 # Add additional components to Gcloud SDK.
 RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
@@ -53,14 +56,11 @@ RUN curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSI
     curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
 
-ENV COMPOSE_VERSION 1.29.2
-RUN pip install "docker-compose==${COMPOSE_VERSION}" && \
-    echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile
-
 # Install stern
 # https://github.com/stern/stern/releases
 ENV STERN_VERSION 1.22.0
-RUN mkdir /tmp/stern && cd /tmp/stern && \
+RUN mkdir /tmp/stern && \
+    cd /tmp/stern && \
     curl -LO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     mv stern /usr/local/bin/stern && \
@@ -138,6 +138,7 @@ COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
 
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
+    && echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile \
     && echo "export PATH=/google-cloud-sdk/bin:/root/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
     && echo "export TERM=xterm" >> /etc/profile \
     && echo "alias k=\"kubectl\"" >> /etc/profile \
@@ -161,5 +162,4 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(velero completion bash)" >> /etc/profile
 
 # Clean up caches.
-RUN rm -rf /var/cache/apk/* && \
-    rm -rf /root/.cargo
+RUN rm -rf /var/cache/apk/*
