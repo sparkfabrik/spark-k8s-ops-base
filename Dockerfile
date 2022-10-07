@@ -65,7 +65,7 @@ RUN pip install "docker-compose==${COMPOSE_VERSION}" && \
 
 # Install stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.22.0
+ENV STERN_VERSION 1.21.0
 RUN mkdir /tmp/stern && cd /tmp/stern && \
     curl -LO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
