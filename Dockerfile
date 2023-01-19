@@ -25,7 +25,8 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat py-pip python3-dev \
-    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip
+    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip \
+    mysql-client
 
 # Add additional components to Gcloud SDK.
 RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
@@ -63,7 +64,7 @@ RUN curl -fsSL -o onessl https://github.com/kubepack/onessl/releases/download/v$
     mv onessl /usr/local/bin/
 
 # https://github.com/atombender/ktail/releases
-ENV KTAIL_VERSION 1.2.1
+ENV KTAIL_VERSION 1.3.1
 RUN curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
     chmod +x /usr/local/bin/ktail && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx -o /usr/local/bin/kubectx && \
@@ -78,7 +79,7 @@ RUN pip install "docker-compose==${COMPOSE_VERSION}" && \
 
 # Install stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.21.0
+ENV STERN_VERSION 1.22.0
 RUN mkdir /tmp/stern && cd /tmp/stern && \
     curl -LO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -113,7 +114,7 @@ RUN mkdir -p /velero && \
 # Install k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.26.6
+ENV K9S_VERSION 0.26.7
 RUN wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
     tar -xzf k9s_Linux_x86_64.tar.gz && \
     rm k9s_Linux_x86_64.tar.gz && \
@@ -122,7 +123,7 @@ RUN wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/dow
 
 # Install Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble
-ENV KUBENT_VERSION 0.5.1
+ENV KUBENT_VERSION 0.7.0
 RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO > /usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
@@ -134,6 +135,32 @@ RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/
     rm cmctl.tar.gz && \
     mv cmctl /usr/local/bin/cmctl && \
     chmod +x /usr/local/bin/cmctl
+
+# Install Cloud SQL Auth Proxy
+# https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
+ENV CLOUDSQL_AUTH_PROXY v1.33.2
+RUN wget https://storage.googleapis.com/cloudsql-proxy/${CLOUDSQL_AUTH_PROXY}/cloud_sql_proxy.linux.${TARGETARCH} -O /usr/local/bin/cloud_sql_proxy -q && \
+    chmod +x /usr/local/bin/cloud_sql_proxy
+
+# Install Kubeseal - Sealed Secrets
+# https://github.com/bitnami-labs/sealed-secrets/releases
+ENV KUBESEAL_VERSION 0.19.4
+RUN mkdir -p /tmp/kubeseal && \
+    curl -Lo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    tar -C /tmp/kubeseal -xzf /tmp/kubeseal/kubeseal.tar.gz && \
+    mv /tmp/kubeseal/kubeseal /usr/local/bin/kubeseal && \
+    chmod +x /usr/local/bin/kubeseal && \
+    rm -rf /tmp/kubeseal
+
+# Install Terraform Docs
+# https://github.com/terraform-docs/terraform-docs/releases
+ENV TERRAFORM_DOCS_VERSION 0.16.0
+RUN mkdir -p /tmp/td && \
+    curl -Lo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
+    tar -C /tmp/td -xzf /tmp/td/terraform-docs.tar.gz && \
+    mv /tmp/td/terraform-docs /usr/local/bin/terraform-docs && \
+    chmod +x /usr/local/bin/terraform-docs && \
+    rm -rf /tmp/td
 
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
