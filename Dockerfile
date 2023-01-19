@@ -120,12 +120,12 @@ RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KU
 
 ## Install Cert Manager CLI - cmctl
 ## https://github.com/jetstack/cert-manager/releases
-# ENV CMCTL_VERSION 1.9.1
-# RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
-#     tar -xzf cmctl.tar.gz && \
-#     rm cmctl.tar.gz && \
-#     mv cmctl /usr/local/bin/cmctl && \
-#     chmod +x /usr/local/bin/cmctl
+ENV CMCTL_VERSION 1.11.0
+RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
+    tar -xzf cmctl.tar.gz && \
+    rm cmctl.tar.gz && \
+    mv cmctl /usr/local/bin/cmctl && \
+    chmod +x /usr/local/bin/cmctl
 
 # Install Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
@@ -152,6 +152,21 @@ RUN mkdir -p /tmp/td && \
     mv /tmp/td/terraform-docs /usr/local/bin/terraform-docs && \
     chmod +x /usr/local/bin/terraform-docs && \
     rm -rf /tmp/td
+
+# https://github.com/aquasecurity/trivy/releases
+ENV TRIVY_VERSION 0.36.1
+# https://github.com/infracost/infracost/releases
+ENV INFRACOST_VERSION 0.10.16
+# Install Trivy and Infracost.
+RUN echo "Installing Trivy version ${TRIVY_VERSION}" && \
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
+    trivy --version && \
+    echo "Installing Infracost version ${INFRACOST_VERSION}" && \
+    wget https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-amd64.tar.gz -O /tmp/infracost-linux-amd64.tar.gz -q && \
+    tar -C /tmp -xzf /tmp/infracost-linux-amd64.tar.gz && \
+    mv /tmp/infracost-linux-amd64 /usr/local/bin/infracost && \
+    chmod +x /usr/local/bin/infracost && \
+    infracost --version
 
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
