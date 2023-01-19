@@ -24,9 +24,8 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # Install additional components.
 RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
-    findutils grep gettext docker ncurses jq bat py-pip python3-dev \
-    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip \
-    mysql-client
+    findutils grep gettext docker ncurses jq bat \
+    openssl git unzip mysql-client
 
 # Add additional components to Gcloud SDK.
 RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
