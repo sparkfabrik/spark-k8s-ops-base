@@ -43,7 +43,7 @@ RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-rel
     chmod +x /usr/local/bin/kubectl
 
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION 1.3.1
+ENV TERRAFORM_VERSION 1.3.7
 RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
