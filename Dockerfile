@@ -1,4 +1,13 @@
-FROM eu.gcr.io/google.com/cloudsdktool/cloud-sdk:405.0.0-alpine
+ARG CLOUD_SDK_VERSION=412.0.0-alpine
+ARG AWS_CLI_VERSION=2.9.8
+ARG ALPINE_VERSION=3.15
+# To fetch the right alpine version use:
+# docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
+# Check the available version here: https://github.com/sparkfabrik/docker-alpine-aws-cli/pkgs/container/docker-alpine-aws-cli
+
+FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} as awscli
+
+FROM eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION}
 
 LABEL org.opencontainers.image.source=https://github.com/sparkfabrik/spark-k8s-ops-base
 
@@ -13,16 +22,18 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 
 # Install additional components.
-RUN apk update && \
-    apk upgrade && \
-    apk add vim tmux curl wget less make bash bash-completion \
-      util-linux pciutils usbutils coreutils binutils \
-      findutils grep gettext docker docker-compose ncurses\
-      jq bat openssl libffi-dev openssl-dev libc-dev \
-      git unzip
+RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
+    bash-completion util-linux pciutils usbutils coreutils binutils \
+    findutils grep gettext docker ncurses jq bat py-pip python3-dev \
+    openssl libffi-dev openssl-dev gcc libc-dev rust cargo git unzip \
+    mysql-client
 
 # Add additional components to Gcloud SDK.
 RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
+
+# Install AWS CLI v2 using the binary builded in the awscli stage
+COPY --from=awscli /usr/local/aws-cli/ /usr/local/aws-cli/
+RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws
 
 # Use the gke-auth-plugin to authenticate to the GKE cluster.
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
@@ -32,7 +43,7 @@ RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-rel
     chmod +x /usr/local/bin/kubectl
 
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION 1.3.1
+ENV TERRAFORM_VERSION 1.3.7
 RUN curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
@@ -47,7 +58,7 @@ RUN curl -o /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-l
     rm -f /tmp/tflint_install.sh
 
 # https://github.com/atombender/ktail/releases
-ENV KTAIL_VERSION 1.2.1
+ENV KTAIL_VERSION 1.3.1
 RUN curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
     chmod +x /usr/local/bin/ktail && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx -o /usr/local/bin/kubectx && \
@@ -94,7 +105,7 @@ RUN mkdir -p /velero && \
 # Install k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.26.6
+ENV K9S_VERSION 0.26.7
 RUN wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
     tar -xzf k9s_Linux_x86_64.tar.gz && \
     rm k9s_Linux_x86_64.tar.gz && \
@@ -103,7 +114,7 @@ RUN wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/dow
 
 # Install Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble
-ENV KUBENT_VERSION 0.5.1
+ENV KUBENT_VERSION 0.7.0
 RUN curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO > /usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
@@ -115,6 +126,32 @@ RUN curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/
     rm cmctl.tar.gz && \
     mv cmctl /usr/local/bin/cmctl && \
     chmod +x /usr/local/bin/cmctl
+
+# Install Cloud SQL Auth Proxy
+# https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
+ENV CLOUDSQL_AUTH_PROXY v1.33.2
+RUN wget https://storage.googleapis.com/cloudsql-proxy/${CLOUDSQL_AUTH_PROXY}/cloud_sql_proxy.linux.${TARGETARCH} -O /usr/local/bin/cloud_sql_proxy -q && \
+    chmod +x /usr/local/bin/cloud_sql_proxy
+
+# Install Kubeseal - Sealed Secrets
+# https://github.com/bitnami-labs/sealed-secrets/releases
+ENV KUBESEAL_VERSION 0.19.4
+RUN mkdir -p /tmp/kubeseal && \
+    curl -Lo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    tar -C /tmp/kubeseal -xzf /tmp/kubeseal/kubeseal.tar.gz && \
+    mv /tmp/kubeseal/kubeseal /usr/local/bin/kubeseal && \
+    chmod +x /usr/local/bin/kubeseal && \
+    rm -rf /tmp/kubeseal
+
+# Install Terraform Docs
+# https://github.com/terraform-docs/terraform-docs/releases
+ENV TERRAFORM_DOCS_VERSION 0.16.0
+RUN mkdir -p /tmp/td && \
+    curl -Lo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
+    tar -C /tmp/td -xzf /tmp/td/terraform-docs.tar.gz && \
+    mv /tmp/td/terraform-docs /usr/local/bin/terraform-docs && \
+    chmod +x /usr/local/bin/terraform-docs && \
+    rm -rf /tmp/td
 
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
