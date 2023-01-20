@@ -22,10 +22,12 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # https://docs.docker.com/compose/install/#install-compose-on-linux-systems
 
 # Install additional components.
-RUN apk update && apk upgrade && apk add vim tmux curl wget less make bash \
+RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat \
     openssl git unzip mysql-client
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Add additional components to Gcloud SDK.
 RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
@@ -40,7 +42,7 @@ ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
 # Install kubectl
 ENV KUBECTL_VERSION 1.23.3
 RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
-    curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
+    curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
 # Terraform and related tools installation.
@@ -48,7 +50,7 @@ RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
 # https://releases.hashicorp.com/terraform/
 ENV TERRAFORM_VERSION 1.3.7
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
-    curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
+    curl -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
     chmod +x /usr/local/bin/terraform && \
@@ -59,7 +61,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 ENV TERRAFORM_DOCS_VERSION 0.16.0
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
-    curl -Lo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
+    curl -sLo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
     tar -C /tmp/td -xzf /tmp/td/terraform-docs.tar.gz && \
     mv /tmp/td/terraform-docs /usr/local/bin/terraform-docs && \
     chmod +x /usr/local/bin/terraform-docs && \
@@ -68,7 +70,7 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint
 RUN echo "Installing latest tflint Terraform linter" && \
-    curl -o /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh && \
+    curl -so /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh && \
     chmod +x /tmp/tflint_install.sh && \
     /tmp/tflint_install.sh && \
     rm -f /tmp/tflint_install.sh
@@ -77,12 +79,12 @@ RUN echo "Installing latest tflint Terraform linter" && \
 # https://github.com/atombender/ktail/releases
 ENV KTAIL_VERSION 1.3.1
 RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
-    curl -L https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
+    curl -sL https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
     chmod +x /usr/local/bin/ktail && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx -o /usr/local/bin/kubectx && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens -o /usr/local/bin/kubens && \
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx -o /usr/local/bin/kubectx && \
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens -o /usr/local/bin/kubens && \
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
-    curl -L https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
+    curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
 
 # Stern
@@ -91,7 +93,7 @@ ENV STERN_VERSION 1.22.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
-    curl -LO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    curl -sLO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     mv stern /usr/local/bin/stern && \
     rm stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -105,7 +107,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 # Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
 ENV HELM_VERSION 3.8.2
 RUN echo "Installing helm ${HELM_VERSION}..." && \
-    wget -O helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    wget -qO helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
     cp linux-${TARGETARCH}/helm /usr/local/bin/helm && \
     rm helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -117,7 +119,7 @@ ENV VELERO_VERSION 1.9.2
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
-    wget https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    wget -q https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar zxvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /usr/local/bin/velero && \
     chmod +x /usr/local/bin/velero && \
@@ -128,7 +130,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # https://github.com/derailed/k9s/releases
 ENV K9S_VERSION 0.26.7
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
-    wget -O k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
+    wget -qO k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
     tar -xzf k9s_Linux_x86_64.tar.gz && \
     rm k9s_Linux_x86_64.tar.gz && \
     mv k9s /usr/local/bin/k9s && \
@@ -145,7 +147,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 # https://github.com/jetstack/cert-manager/releases
 ENV CMCTL_VERSION 1.11.0
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
-    curl -o cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
+    curl -so cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
     tar -xzf cmctl.tar.gz && \
     rm cmctl.tar.gz && \
     mv cmctl /usr/local/bin/cmctl && \
@@ -155,7 +157,7 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
 ENV CLOUDSQL_AUTH_PROXY v1.33.2
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY}..." && \
-    wget https://storage.googleapis.com/cloudsql-proxy/${CLOUDSQL_AUTH_PROXY}/cloud_sql_proxy.linux.${TARGETARCH} -O /usr/local/bin/cloud_sql_proxy -q && \
+    wget -q https://storage.googleapis.com/cloudsql-proxy/${CLOUDSQL_AUTH_PROXY}/cloud_sql_proxy.linux.${TARGETARCH} -O /usr/local/bin/cloud_sql_proxy -q && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Kubeseal - Sealed Secrets
@@ -163,7 +165,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY}..." && \
 ENV KUBESEAL_VERSION 0.19.4
 RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
     mkdir -p /tmp/kubeseal && \
-    curl -Lo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    curl -sLo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp/kubeseal -xzf /tmp/kubeseal/kubeseal.tar.gz && \
     mv /tmp/kubeseal/kubeseal /usr/local/bin/kubeseal && \
     chmod +x /usr/local/bin/kubeseal && \
@@ -180,7 +182,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 # https://github.com/infracost/infracost/releases
 ENV INFRACOST_VERSION 0.10.16
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
-    wget https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz -O /tmp/infracost-linux-${TARGETARCH}.tar.gz -q && \
+    wget -q https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz -O /tmp/infracost-linux-${TARGETARCH}.tar.gz -q && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     mv /tmp/infracost-linux-${TARGETARCH} /usr/local/bin/infracost && \
     chmod +x /usr/local/bin/infracost
@@ -229,6 +231,3 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(helm completion bash)" >> /etc/profile \
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "source <(velero completion bash)" >> /etc/profile
-
-# Clean up caches.
-RUN rm -rf /var/cache/apk/*
