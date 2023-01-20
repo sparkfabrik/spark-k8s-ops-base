@@ -59,7 +59,7 @@ jobs:
         with:
           scan-type: 'image'
           image-ref: '${{ env.IMAGE_NAME }}:latest'
-          format: 'serif'
+          format: 'sarif'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'
