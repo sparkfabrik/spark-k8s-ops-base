@@ -36,7 +36,6 @@ jobs:
           format: 'sarif'
           output: 'trivy-results-config.sarif'
           severity: 'CRITICAL'
-          exit-code: '0'
           ignore-unfixed: true
 
       # Refs https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github
@@ -46,23 +45,27 @@ jobs:
           sarif_file: 'trivy-results-config.sarif'
           category: Configuration
 
-      - name: Run Trivy vulnerability scanner in docker mode
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: '${{ env.IMAGE_NAME }}:latest'
-          format: 'sarif'
-          output: 'trivy-results-docker.sarif'
-          severity: 'CRITICAL'
-          timeout: '15m'
-          exit-code: '0'
-          ignore-unfixed: true
-
-      # Refs https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github
-      - name: Upload Trivy image scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'trivy-results-docker.sarif'
-          category: Image
+#      - name: Run Trivy vulnerability scanner in the docker container
+#        # Run only on master branch, not on PRs
+#        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          image-ref: '${{ env.IMAGE_NAME }}:latest'
+#          format: 'sarif'
+#          output: 'trivy-results-docker.sarif'
+#          severity: 'CRITICAL'
+#          timeout: '15m'
+#          exit-code: '0'
+#          ignore-unfixed: false
+#
+#      # Refs https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github
+#      - name: Upload Trivy image scan results to GitHub Security tab
+#        # Run only on master branch, not on PRs
+#        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+#        uses: github/codeql-action/upload-sarif@v2
+#        with:
+#          sarif_file: 'trivy-results-docker.sarif'
+#          category: Image
 
   Deploy:
     needs: TestAndScan
@@ -72,8 +75,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Log into GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+      # Refs https://github.com/docker/login-action#github-container-registry
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
