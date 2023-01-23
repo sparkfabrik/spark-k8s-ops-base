@@ -59,11 +59,13 @@ jobs:
       - name: Run Trivy vulnerability scanner in docker mode
         uses: aquasecurity/trivy-action@master
         env:
-          SARIF_ARGS: --severity CRITICAL --security-checks vuln,license
+          SARIF_ARGS: --severity "CRITICAL" --security-checks "vuln,license"
         with:
           scan-type: 'image'
           image-ref: '${{ env.IMAGE_NAME }}:latest'
-          format: 'sarif'
+          # Movedo to template format from 'sarif' to fix https://github.com/aquasecurity/trivy-action/issues/95
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
           output: 'trivy-results-docker.sarif'
           severity: 'CRITICAL'
           timeout: '15m'
