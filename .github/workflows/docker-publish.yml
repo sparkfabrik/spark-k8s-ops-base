@@ -57,7 +57,7 @@ jobs:
           docker buildx build --load . --tag $IMAGE_NAME:latest
 
       - name: Run Trivy vulnerability scanner in docker mode
-        uses: aquasecurity/trivy-action@
+        uses: aquasecurity/trivy-action@master
         env:
           SARIF_ARGS: --severity CRITICAL --security-checks vuln,license
         with:
