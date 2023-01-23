@@ -1,4 +1,4 @@
-ARG CLOUD_SDK_VERSION=412.0.0-alpine
+ARG CLOUD_SDK_VERSION=414.0.0-alpine
 ARG AWS_CLI_VERSION=2.9.8
 ARG ALPINE_VERSION=3.15
 # To fetch the right alpine version use:
@@ -107,7 +107,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 # Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
 ENV HELM_VERSION 3.8.2
 RUN echo "Installing helm ${HELM_VERSION}..." && \
-    wget -qO helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
     cp linux-${TARGETARCH}/helm /usr/local/bin/helm && \
     rm helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -115,11 +115,11 @@ RUN echo "Installing helm ${HELM_VERSION}..." && \
 
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION 1.9.2
+ENV VELERO_VERSION 1.9.5
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
-    wget -q https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    curl -sLO https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar zxvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /usr/local/bin/velero && \
     chmod +x /usr/local/bin/velero && \
@@ -130,7 +130,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # https://github.com/derailed/k9s/releases
 ENV K9S_VERSION 0.26.7
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
-    wget -qO k9s_Linux_x86_64.tar.gz https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz && \
+    curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz -o k9s_Linux_x86_64.tar.gz && \
     tar -xzf k9s_Linux_x86_64.tar.gz && \
     rm k9s_Linux_x86_64.tar.gz && \
     mv k9s /usr/local/bin/k9s && \
@@ -147,7 +147,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 # https://github.com/jetstack/cert-manager/releases
 ENV CMCTL_VERSION 1.11.0
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
-    curl -so cmctl.tar.gz -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz && \
+    curl -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz -o cmctl.tar.gz && \
     tar -xzf cmctl.tar.gz && \
     rm cmctl.tar.gz && \
     mv cmctl /usr/local/bin/cmctl && \
@@ -155,9 +155,9 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 
 # Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-ENV CLOUDSQL_AUTH_PROXY v1.33.2
-RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY}..." && \
-    wget -q https://storage.googleapis.com/cloudsql-proxy/${CLOUDSQL_AUTH_PROXY}/cloud_sql_proxy.linux.${TARGETARCH} -O /usr/local/bin/cloud_sql_proxy -q && \
+ENV CLOUDSQL_AUTH_PROXY_VERSION 1.33.2
+RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY_VERSION}..." && \
+    curl -sL https://storage.googleapis.com/cloudsql-proxy/v${CLOUDSQL_AUTH_PROXY_VERSION}/cloud_sql_proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Kubeseal - Sealed Secrets
@@ -182,7 +182,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 # https://github.com/infracost/infracost/releases
 ENV INFRACOST_VERSION 0.10.16
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
-    wget -q https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz -O /tmp/infracost-linux-${TARGETARCH}.tar.gz -q && \
+    wget -q https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz -O /tmp/infracost-linux-${TARGETARCH}.tar.gz&& \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     mv /tmp/infracost-linux-${TARGETARCH} /usr/local/bin/infracost && \
     chmod +x /usr/local/bin/infracost
