@@ -24,4 +24,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: 'trivy-scheduled-results-docker.sarif'
-          category: "image"
+          category: "Image"
