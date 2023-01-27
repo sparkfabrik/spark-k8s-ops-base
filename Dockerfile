@@ -105,7 +105,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 # This apiVersion is automatically configured by aws-cli, using `aws eks update-kubeconfig` command,
 # which is at its latest version.
 # Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
-ENV HELM_VERSION 3.8.2
+ENV HELM_VERSION 3.11.0
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
