@@ -1,4 +1,4 @@
-ARG CLOUD_SDK_VERSION=414.0.0-alpine
+ARG CLOUD_SDK_VERSION=416.0.0-alpine
 ARG AWS_CLI_VERSION=2.9.8
 ARG ALPINE_VERSION=3.15
 # To fetch the right alpine version use:
