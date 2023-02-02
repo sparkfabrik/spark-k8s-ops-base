@@ -182,7 +182,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 # https://github.com/infracost/infracost/releases
 ENV INFRACOST_VERSION 0.10.16
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
-    wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz -O /tmp/infracost-linux-${TARGETARCH}.tar.gz" && \
+    wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     mv /tmp/infracost-linux-${TARGETARCH} /usr/local/bin/infracost && \
     chmod +x /usr/local/bin/infracost
@@ -190,7 +190,7 @@ RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
 # Install Flux.
 # https://github.com/fluxcd/flux2/releases
 ENV FLUXCD_VERSION 0.38.3
-RUN wget -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz -O flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" && \
+RUN wget -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" -O flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     mv flux /usr/local/bin/flux && \
