@@ -1,5 +1,8 @@
-ARG CLOUD_SDK_VERSION=414.0.0-alpine
-ARG AWS_CLI_VERSION=2.9.8
+# You can find the list of the available tags here:
+# https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
+
+ARG CLOUD_SDK_VERSION=417.0.1-alpine
+ARG AWS_CLI_VERSION=2.9.17
 ARG ALPINE_VERSION=3.15
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -14,6 +17,9 @@ LABEL org.opencontainers.image.source=https://github.com/sparkfabrik/spark-k8s-o
 # Build target arch passed by BuildKit
 ARG TARGETARCH
 
+# Add empty healthcheck. This docker image is mainly used as a CLI.
+HEALTHCHECK NONE
+
 ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 
 # NOTE: you can check which is the latest stable kubeclt version with:
@@ -25,7 +31,7 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker ncurses jq bat \
-    openssl git unzip mysql-client
+    openssl git unzip mysql-client yq
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -48,7 +54,7 @@ RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
 # Terraform and related tools installation.
 # Terraform cli
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION 1.3.7
+ENV TERRAFORM_VERSION 1.3.8
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
     curl -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
@@ -89,7 +95,7 @@ RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
 
 # Stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.22.0
+ENV STERN_VERSION 1.23.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
@@ -105,7 +111,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 # This apiVersion is automatically configured by aws-cli, using `aws eks update-kubeconfig` command,
 # which is at its latest version.
 # Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
-ENV HELM_VERSION 3.11.0
+ENV HELM_VERSION 3.11.1
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
@@ -115,7 +121,7 @@ RUN echo "Installing helm ${HELM_VERSION}..." && \
 
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION 1.9.5
+ENV VELERO_VERSION 1.10.1
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
@@ -128,11 +134,11 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.26.7
+ENV K9S_VERSION 0.27.3
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
-    curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_x86_64.tar.gz -o k9s_Linux_x86_64.tar.gz && \
-    tar -xzf k9s_Linux_x86_64.tar.gz && \
-    rm k9s_Linux_x86_64.tar.gz && \
+    curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
+    tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
+    rm k9s_Linux_${TARGETARCH}.tar.gz && \
     mv k9s /usr/local/bin/k9s && \
     chmod +x /usr/local/bin/k9s
 
@@ -173,14 +179,14 @@ RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION 0.36.1
+ENV TRIVY_VERSION 0.37.2
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION 0.10.16
+ENV INFRACOST_VERSION 0.10.17
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -189,7 +195,7 @@ RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
 
 # Install Flux.
 # https://github.com/fluxcd/flux2/releases
-ENV FLUXCD_VERSION 0.38.3
+ENV FLUXCD_VERSION 0.39.0
 RUN wget -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" -O flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
