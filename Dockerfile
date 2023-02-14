@@ -10,6 +10,13 @@ ARG ALPINE_VERSION=3.15
 
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} as awscli
 
+# Build go binaries
+FROM golang:1.20.0-alpine3.17 as gobinaries
+
+ENV TFK8S_VERSION 0.1.10
+RUN apk --no-cache add git && \
+    go install github.com/jrhouston/tfk8s@v${TFK8S_VERSION}
+
 FROM eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION}
 
 LABEL org.opencontainers.image.source=https://github.com/sparkfabrik/spark-k8s-ops-base
@@ -41,6 +48,10 @@ RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
 # Install AWS CLI v2 using the binary builded in the awscli stage
 COPY --from=awscli /usr/local/aws-cli/ /usr/local/aws-cli/
 RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws
+
+# Install tfk8s copying the binary from the gobinaries stage
+COPY --from=gobinaries /go/bin/tfk8s /usr/local/bin/tfk8s
+RUN chmod +x /usr/local/bin/tfk8s
 
 # Use the gke-auth-plugin to authenticate to the GKE cluster.
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
