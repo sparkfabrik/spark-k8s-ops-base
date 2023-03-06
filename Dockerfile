@@ -1,7 +1,7 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=417.0.1-alpine
+ARG CLOUD_SDK_VERSION=420.0.0-alpine
 ARG AWS_CLI_VERSION=2.9.17
 ARG ALPINE_VERSION=3.15
 # To fetch the right alpine version use:
@@ -97,11 +97,22 @@ RUN echo "Installing latest tflint Terraform linter" && \
 ENV KTAIL_VERSION 1.3.1
 RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
     curl -sL https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
-    chmod +x /usr/local/bin/ktail && \
-    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx -o /usr/local/bin/kubectx && \
-    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens -o /usr/local/bin/kubens && \
+    chmod +x /usr/local/bin/ktail
+
+# kubectx and kubens utilities
+# https://github.com/ahmetb/kubectx
+ENV KUBECTX_VERSION 0.9.4
+RUN curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx -o /usr/local/bin/kubectx && \
+    curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubens -o /usr/local/bin/kubens && \
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
-    curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/master/kubetail -o /usr/local/bin/kubetail && \
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubectx.bash -o /etc/profile.d/kubectx.sh && \
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubens.bash -o /etc/profile.d/kubens.sh && \
+    chmod +x /etc/profile.d/kubectx.sh /etc/profile.d/kubens.sh
+
+# Kubetail
+# https://github.com/johanhaleby/kubetail
+ENV KUBETAIL_VERSION 1.6.17
+RUN curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_VERSION}/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
 
 # Stern
