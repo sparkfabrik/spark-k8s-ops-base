@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=420.0.0-alpine
-ARG AWS_CLI_VERSION=2.9.17
+ARG CLOUD_SDK_VERSION=422.0.0-alpine
+ARG AWS_CLI_VERSION=2.11.2
 ARG ALPINE_VERSION=3.15
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -105,9 +105,9 @@ ENV KUBECTX_VERSION 0.9.4
 RUN curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx -o /usr/local/bin/kubectx && \
     curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubens -o /usr/local/bin/kubens && \
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
-    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubectx.bash -o /etc/profile.d/kubectx.sh && \
-    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubens.bash -o /etc/profile.d/kubens.sh && \
-    chmod +x /etc/profile.d/kubectx.sh /etc/profile.d/kubens.sh
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubectx.bash -o /etc/profile.d/kubectx.bash && \
+    curl -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubens.bash -o /etc/profile.d/kubens.bash && \
+    chmod +x /etc/profile.d/kubectx.bash /etc/profile.d/kubens.bash
 
 # Kubetail
 # https://github.com/johanhaleby/kubetail
@@ -268,3 +268,6 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(helm completion bash)" >> /etc/profile \
     && echo "source <(kubectl completion bash)" >> /etc/profile \
     && echo "source <(velero completion bash)" >> /etc/profile
+
+# Set bash as default shell
+ENTRYPOINT [ "/bin/bash" ]
