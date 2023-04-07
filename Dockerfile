@@ -1,9 +1,9 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=422.0.0-alpine
+ARG CLOUD_SDK_VERSION=425.0.0-alpine
 ARG AWS_CLI_VERSION=2.11.2
-ARG ALPINE_VERSION=3.15
+ARG ALPINE_VERSION=3.17
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
 # Check the available version here: https://github.com/sparkfabrik/docker-alpine-aws-cli/pkgs/container/docker-alpine-aws-cli
@@ -270,4 +270,4 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     && echo "source <(velero completion bash)" >> /etc/profile
 
 # Set bash as default shell
-ENTRYPOINT [ "/bin/bash" ]
+CMD [ "/bin/bash" ]
