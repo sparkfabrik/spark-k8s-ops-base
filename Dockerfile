@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=425.0.0-alpine
-ARG AWS_CLI_VERSION=2.11.2
+ARG CLOUD_SDK_VERSION=429.0.0-alpine
+ARG AWS_CLI_VERSION=2.11.18
 ARG ALPINE_VERSION=3.17
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -13,6 +13,7 @@ FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE
 # Build go binaries
 FROM golang:1.20.0-alpine3.17 as gobinaries
 
+# https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION 0.1.10
 RUN apk --no-cache add git && \
     go install github.com/jrhouston/tfk8s@v${TFK8S_VERSION}
@@ -57,7 +58,7 @@ RUN chmod +x /usr/local/bin/tfk8s
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
 
 # Install kubectl
-ENV KUBECTL_VERSION 1.23.3
+ENV KUBECTL_VERSION 1.24.10
 RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
     curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
@@ -65,7 +66,7 @@ RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
 # Terraform and related tools installation.
 # Terraform cli
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION 1.3.8
+ENV TERRAFORM_VERSION 1.4.6
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
     curl -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
@@ -94,7 +95,7 @@ RUN echo "Installing latest tflint Terraform linter" && \
 
 # Ktail
 # https://github.com/atombender/ktail/releases
-ENV KTAIL_VERSION 1.3.1
+ENV KTAIL_VERSION 1.4.0
 RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
     curl -sL https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
     chmod +x /usr/local/bin/ktail
@@ -111,13 +112,13 @@ RUN curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERS
 
 # Kubetail
 # https://github.com/johanhaleby/kubetail
-ENV KUBETAIL_VERSION 1.6.17
+ENV KUBETAIL_VERSION 1.6.18
 RUN curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_VERSION}/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
 
 # Stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.23.0
+ENV STERN_VERSION 1.25.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
@@ -129,21 +130,17 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-# The 3.8.2 is the latest version that works with EKS `client.authentication.k8s.io/v1alpha1` apiVersion.
-# This apiVersion is automatically configured by aws-cli, using `aws eks update-kubeconfig` command,
-# which is at its latest version.
-# Remember that we are using `aws-cli` v1 because the v2 is not available for alpine linux.
-ENV HELM_VERSION 3.11.1
+ENV HELM_VERSION 3.11.3
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
-    tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz  && \
+    tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp linux-${TARGETARCH}/helm /usr/local/bin/helm && \
     rm helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     rm -fr linux-${TARGETARCH}/
 
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION 1.10.1
+ENV VELERO_VERSION 1.10.3
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
@@ -156,7 +153,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.27.3
+ENV K9S_VERSION 0.27.4
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
     curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
     tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
@@ -168,12 +165,12 @@ RUN echo "Installing k9s ${K9S_VERSION}..." && \
 # https://github.com/doitintl/kube-no-trouble
 ENV KUBENT_VERSION 0.7.0
 RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
-    curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO > /usr/local/bin/kubent && \
+    curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO >/usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
 # Cert Manager CLI - cmctl
 # https://github.com/jetstack/cert-manager/releases
-ENV CMCTL_VERSION 1.11.0
+ENV CMCTL_VERSION 1.11.1
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
     curl -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz -o cmctl.tar.gz && \
     tar -xzf cmctl.tar.gz && \
@@ -190,7 +187,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY_VERSION}...
 
 # Kubeseal - Sealed Secrets
 # https://github.com/bitnami-labs/sealed-secrets/releases
-ENV KUBESEAL_VERSION 0.19.4
+ENV KUBESEAL_VERSION 0.20.5
 RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
     mkdir -p /tmp/kubeseal && \
     curl -sLo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -201,14 +198,14 @@ RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION 0.37.2
+ENV TRIVY_VERSION 0.41.0
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION 0.10.17
+ENV INFRACOST_VERSION 0.10.21
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -222,7 +219,7 @@ RUN wget -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION
     tar -xvf flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     mv flux /usr/local/bin/flux && \
-    echo "source <(flux completion bash)" >> /etc/profile
+    echo "source <(flux completion bash)" >>/etc/profile
 
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
@@ -245,29 +242,29 @@ RUN kubectl krew install resource-capacity
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
 
-RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >> /etc/profile \
-    && echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >> /etc/profile \
-    && echo "export PATH=/google-cloud-sdk/bin:/root/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /etc/profile \
-    && echo "export TERM=xterm" >> /etc/profile \
-    && echo "alias k=\"kubectl\"" >> /etc/profile \
-    && echo "alias events=\"kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp\"" >> /etc/profile \
-    && echo "alias watch-events=\"kubectl get events -w --all-namespaces\"" >> /etc/profile \
-    && echo "alias nodes=\"kubectl get nodes\"" >> /etc/profile \
-    && echo "alias top-nodes=\"kubectl top nodes\"" >> /etc/profile \
-    && echo "alias pods=\"kubectl get pod --all-namespaces\"" >> /etc/profile \
-    && echo "alias deployments=\"kubectl get deployments --all-namespaces\"" >> /etc/profile \
-    && echo "alias jobs=\"kubectl get jobs --all-namespaces\"" >> /etc/profile \
-    && echo "alias cronjobs=\"kubectl get cronjobs --all-namespaces\"" >> /etc/profile \
-    && echo "alias ingress=\"kubectl get ingress --all-namespaces\"" >> /etc/profile \
-    && echo "alias services=\"kubectl get services --all-namespaces\"" >> /etc/profile \
-    && echo "alias kdp-error=\"kubectl get pods | grep Error | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
-    && echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >> /etc/profile \
-    && echo "alias helm3=\"helm\"" >> /etc/profile \
-    && echo "alias kube-capacity=\"kubectl resource-capacity\"" >> /etc/profile \
-    && echo "source <(cmctl completion bash)" >> /etc/profile \
-    && echo "source <(helm completion bash)" >> /etc/profile \
-    && echo "source <(kubectl completion bash)" >> /etc/profile \
-    && echo "source <(velero completion bash)" >> /etc/profile
+RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >>/etc/profile && \
+    echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >>/etc/profile && \
+    echo "export PATH=/google-cloud-sdk/bin:/root/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >>/etc/profile && \
+    echo "export TERM=xterm" >>/etc/profile && \
+    echo "alias k=\"kubectl\"" >>/etc/profile && \
+    echo "alias events=\"kubectl get events --all-namespaces --sort-by=.metadata.creationTimestamp\"" >>/etc/profile && \
+    echo "alias watch-events=\"kubectl get events -w --all-namespaces\"" >>/etc/profile && \
+    echo "alias nodes=\"kubectl get nodes\"" >>/etc/profile && \
+    echo "alias top-nodes=\"kubectl top nodes\"" >>/etc/profile && \
+    echo "alias pods=\"kubectl get pod --all-namespaces\"" >>/etc/profile && \
+    echo "alias deployments=\"kubectl get deployments --all-namespaces\"" >>/etc/profile && \
+    echo "alias jobs=\"kubectl get jobs --all-namespaces\"" >>/etc/profile && \
+    echo "alias cronjobs=\"kubectl get cronjobs --all-namespaces\"" >>/etc/profile && \
+    echo "alias ingress=\"kubectl get ingress --all-namespaces\"" >>/etc/profile && \
+    echo "alias services=\"kubectl get services --all-namespaces\"" >>/etc/profile && \
+    echo "alias kdp-error=\"kubectl get pods | grep Error | cut -d' ' -f 1 | xargs kubectl delete pod\"" >>/etc/profile && \
+    echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >>/etc/profile && \
+    echo "alias helm3=\"helm\"" >>/etc/profile && \
+    echo "alias kube-capacity=\"kubectl resource-capacity\"" >>/etc/profile && \
+    echo "source <(cmctl completion bash)" >>/etc/profile && \
+    echo "source <(helm completion bash)" >>/etc/profile && \
+    echo "source <(kubectl completion bash)" >>/etc/profile && \
+    echo "source <(velero completion bash)" >>/etc/profile
 
 # Set bash as default shell
 CMD [ "/bin/bash" ]
