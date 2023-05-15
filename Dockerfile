@@ -261,6 +261,7 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     echo "alias kdp-evicted=\"kubectl get pods | grep Evicted | cut -d' ' -f 1 | xargs kubectl delete pod\"" >>/etc/profile && \
     echo "alias helm3=\"helm\"" >>/etc/profile && \
     echo "alias kube-capacity=\"kubectl resource-capacity\"" >>/etc/profile && \
+    echo "alias grep=\"grep --color=auto\"" >>/etc/profile && \
     echo "source <(cmctl completion bash)" >>/etc/profile && \
     echo "source <(helm completion bash)" >>/etc/profile && \
     echo "source <(kubectl completion bash)" >>/etc/profile && \
