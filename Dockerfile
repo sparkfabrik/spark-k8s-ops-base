@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=429.0.0-alpine
-ARG AWS_CLI_VERSION=2.11.18
+ARG CLOUD_SDK_VERSION=435.0.1-alpine
+ARG AWS_CLI_VERSION=2.12.0
 ARG ALPINE_VERSION=3.17
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -11,7 +11,7 @@ ARG ALPINE_VERSION=3.17
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} as awscli
 
 # Build go binaries
-FROM golang:1.20.0-alpine3.17 as gobinaries
+FROM golang:1.20.5-alpine3.17 as gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION 0.1.10
@@ -130,7 +130,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION 3.11.3
+ENV HELM_VERSION 3.12.1
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -170,7 +170,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 
 # Cert Manager CLI - cmctl
 # https://github.com/jetstack/cert-manager/releases
-ENV CMCTL_VERSION 1.11.1
+ENV CMCTL_VERSION 1.12.1
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
     curl -sfL https://github.com/jetstack/cert-manager/releases/download/v${CMCTL_VERSION}/cmctl-linux-${TARGETARCH}.tar.gz -o cmctl.tar.gz && \
     tar -xzf cmctl.tar.gz && \
@@ -180,14 +180,14 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 
 # Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-ENV CLOUDSQL_AUTH_PROXY_VERSION 1.33.2
+ENV CLOUDSQL_AUTH_PROXY_VERSION 1.33.7
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_AUTH_PROXY_VERSION}..." && \
     curl -sL https://storage.googleapis.com/cloudsql-proxy/v${CLOUDSQL_AUTH_PROXY_VERSION}/cloud_sql_proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Kubeseal - Sealed Secrets
 # https://github.com/bitnami-labs/sealed-secrets/releases
-ENV KUBESEAL_VERSION 0.20.5
+ENV KUBESEAL_VERSION 0.21.0
 RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
     mkdir -p /tmp/kubeseal && \
     curl -sLo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -198,14 +198,14 @@ RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION 0.41.0
+ENV TRIVY_VERSION 0.42.1
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION 0.10.21
+ENV INFRACOST_VERSION 0.10.22
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
