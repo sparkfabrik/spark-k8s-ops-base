@@ -87,8 +87,9 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint
-RUN echo "Installing latest tflint Terraform linter" && \
-    curl -so /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh && \
+ENV TFLINT_VERSION v0.47.0
+RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
+    curl -so /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/${TFLINT_VERSION}/install_linux.sh && \
     chmod +x /tmp/tflint_install.sh && \
     /tmp/tflint_install.sh && \
     rm -f /tmp/tflint_install.sh
