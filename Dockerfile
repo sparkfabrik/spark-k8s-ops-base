@@ -58,7 +58,7 @@ RUN chmod +x /usr/local/bin/tfk8s
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
 
 # Install kubectl
-ENV KUBECTL_VERSION 1.24.10
+ENV KUBECTL_VERSION 1.24.12
 RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
     curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
@@ -236,8 +236,10 @@ RUN set -x; cd "$(mktemp -d)" && \
 
 ENV PATH "/root/.krew/bin:$PATH"
 
-# Install kube-capacity using krew
-RUN kubectl krew install resource-capacity
+# Install kube-capacity using krew https://github.com/robscott/kube-capacity
+RUN kubectl krew install resource-capacity && \
+    # Install community-images using krew https://github.com/kubernetes-sigs/community-images#kubectl-community-images
+    kubectl krew install community-images
 
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
