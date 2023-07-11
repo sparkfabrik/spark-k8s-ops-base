@@ -1,9 +1,9 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=435.0.1-alpine
+ARG CLOUD_SDK_VERSION=438.0.0-alpine
 ARG AWS_CLI_VERSION=2.12.0
-ARG ALPINE_VERSION=3.17
+ARG ALPINE_VERSION=3.18
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
 # Check the available version here: https://github.com/sparkfabrik/docker-alpine-aws-cli/pkgs/container/docker-alpine-aws-cli
@@ -66,7 +66,7 @@ RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
 # Terraform and related tools installation.
 # Terraform cli
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION 1.4.6
+ENV TERRAFORM_VERSION 1.5.2
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
     curl -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
@@ -246,7 +246,7 @@ COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
 
 RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\[\033[1;31m\]\$\[\033[0m\] '" >>/etc/profile && \
-    echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; source <(kubectl completion bash | sed 's/kubectl/k/g') ; fi" >>/etc/profile && \
+    echo "if [ -f /etc/profile.d/bash_completion.sh ]; then source /etc/profile.d/bash_completion.sh; fi" >>/etc/profile && \
     echo "export PATH=/google-cloud-sdk/bin:/root/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >>/etc/profile && \
     echo "export TERM=xterm" >>/etc/profile && \
     echo "alias k=\"kubectl\"" >>/etc/profile && \
@@ -265,9 +265,10 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     echo "alias helm3=\"helm\"" >>/etc/profile && \
     echo "alias kube-capacity=\"kubectl resource-capacity\"" >>/etc/profile && \
     echo "alias grep=\"grep --color=auto\"" >>/etc/profile && \
-    echo "source <(cmctl completion bash)" >>/etc/profile && \
-    echo "source <(helm completion bash)" >>/etc/profile && \
     echo "source <(kubectl completion bash)" >>/etc/profile && \
+    echo "complete -o default -F __start_kubectl k" >>/etc/profile && \
+    echo "source <(helm completion bash)" >>/etc/profile && \
+    echo "source <(cmctl completion bash)" >>/etc/profile && \
     echo "source <(velero completion bash)" >>/etc/profile
 
 # Set bash as default shell

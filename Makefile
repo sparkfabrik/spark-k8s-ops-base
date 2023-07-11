@@ -3,7 +3,7 @@
 # make production-cli
 #
 
-production-cli:
+production-cli: build-docker-image
   # Run the cli template.
 	docker run --rm -v ${PWD}:/mnt \
 		--hostname "SPARK-OPS-BASE-TEST" --name spark-k8s-ops-base \
