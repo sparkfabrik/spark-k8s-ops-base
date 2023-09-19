@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=438.0.0-alpine
-ARG AWS_CLI_VERSION=2.12.0
+ARG CLOUD_SDK_VERSION=446.0.1-alpine
+ARG AWS_CLI_VERSION=2.13.18
 ARG ALPINE_VERSION=3.18
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -240,6 +240,13 @@ ENV PATH "/root/.krew/bin:$PATH"
 RUN kubectl krew install resource-capacity && \
     # Install community-images using krew https://github.com/kubernetes-sigs/community-images#kubectl-community-images
     kubectl krew install community-images
+
+# Install gitlab-runner CLI
+# Install documentation: https://docs.gitlab.com/runner/install/linux-manually.html
+# Gitlab runner CLI verions list: https://gitlab.com/gitlab-org/gitlab-runner/-/tags
+ENV GITLAB_RUNNER_CLI_VERSION 16.3.1
+RUN curl -sfL --output "/usr/local/bin/gitlab-runner" "https://gitlab-runner-downloads.s3.amazonaws.com/v${GITLAB_RUNNER_CLI_VERSION}/binaries/gitlab-runner-linux-${TARGETARCH}" && \
+    chmod +x /usr/local/bin/gitlab-runner
 
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
