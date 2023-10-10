@@ -241,6 +241,14 @@ RUN kubectl krew install resource-capacity && \
     # Install community-images using krew https://github.com/kubernetes-sigs/community-images#kubectl-community-images
     kubectl krew install community-images
 
+# Install pluto: https://github.com/FairwindsOps/pluto
+ENV PLUTO_VERSION 5.18.4
+RUN wget -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    rm pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    chmod +x pluto && \
+    mv pluto /usr/local/bin/pluto
+
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
@@ -269,7 +277,8 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     echo "complete -o default -F __start_kubectl k" >>/etc/profile && \
     echo "source <(helm completion bash)" >>/etc/profile && \
     echo "source <(cmctl completion bash)" >>/etc/profile && \
-    echo "source <(velero completion bash)" >>/etc/profile
+    echo "source <(velero completion bash)" >>/etc/profile && \
+    echo "source <(pluto completion bash)" >>/etc/profile
 
 # Set bash as default shell
 CMD [ "/bin/bash" ]
