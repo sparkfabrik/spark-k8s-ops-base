@@ -76,7 +76,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 
 # Terraform Docs
 # https://github.com/terraform-docs/terraform-docs/releases
-ENV TERRAFORM_DOCS_VERSION 0.16.0
+ENV TERRAFORM_DOCS_VERSION 0.17.0
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
     curl -sLo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
@@ -87,7 +87,7 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint
-ENV TFLINT_VERSION v0.47.0
+ENV TFLINT_VERSION v0.49.0
 RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
     curl -so /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/${TFLINT_VERSION}/install_linux.sh && \
     chmod +x /tmp/tflint_install.sh && \
@@ -103,7 +103,7 @@ RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
 
 # kubectx and kubens utilities
 # https://github.com/ahmetb/kubectx
-ENV KUBECTX_VERSION 0.9.4
+ENV KUBECTX_VERSION 0.9.5
 RUN curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx -o /usr/local/bin/kubectx && \
     curl -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubens -o /usr/local/bin/kubens && \
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
@@ -119,7 +119,7 @@ RUN curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_V
 
 # Stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION 1.25.0
+ENV STERN_VERSION 1.28.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
@@ -131,7 +131,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION 3.12.1
+ENV HELM_VERSION 3.14.0
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -154,7 +154,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION 0.27.4
+ENV K9S_VERSION 0.31.7
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
     curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
     tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
@@ -164,7 +164,7 @@ RUN echo "Installing k9s ${K9S_VERSION}..." && \
 
 # Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble
-ENV KUBENT_VERSION 0.7.0
+ENV KUBENT_VERSION 0.7.1
 RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
     curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO >/usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
@@ -199,14 +199,14 @@ RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION 0.42.1
+ENV TRIVY_VERSION 0.48.3
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION 0.10.22
+ENV INFRACOST_VERSION 0.10.32
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -242,7 +242,7 @@ RUN kubectl krew install resource-capacity && \
     kubectl krew install community-images
 
 # Install pluto: https://github.com/FairwindsOps/pluto
-ENV PLUTO_VERSION 5.18.4
+ENV PLUTO_VERSION 5.19.0
 RUN wget -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
