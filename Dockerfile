@@ -58,7 +58,7 @@ RUN chmod +x /usr/local/bin/tfk8s
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN true
 
 # Install kubectl
-ENV KUBECTL_VERSION 1.24.12
+ENV KUBECTL_VERSION 1.26.13
 RUN echo "Installing kubectl ${KUBECTL_VERSION}..." && \
     curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
