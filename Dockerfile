@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=438.0.0-alpine
-ARG AWS_CLI_VERSION=2.12.0
+ARG CLOUD_SDK_VERSION=461.0.0-alpine
+ARG AWS_CLI_VERSION=2.15.14
 ARG ALPINE_VERSION=3.18
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -11,7 +11,7 @@ ARG ALPINE_VERSION=3.18
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} as awscli
 
 # Build go binaries
-FROM golang:1.20.5-alpine3.17 as gobinaries
+FROM golang:1.21.6-alpine3.18 as gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION 0.1.10
@@ -38,7 +38,7 @@ ENV CLOUDSDK_COMPUTE_REGION europe-west1-b
 # Install additional components.
 RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
-    findutils grep gettext docker ncurses jq bat \
+    findutils grep gettext docker mandoc ncurses jq bat \
     openssl git unzip mysql-client yq
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -48,7 +48,8 @@ RUN gcloud components install app-engine-java beta gke-gcloud-auth-plugin
 
 # Install AWS CLI v2 using the binary builded in the awscli stage
 COPY --from=awscli /usr/local/aws-cli/ /usr/local/aws-cli/
-RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws
+RUN ln -s /usr/local/aws-cli/v2/current/bin/aws /usr/local/bin/aws \
+    && ln -s /usr/local/aws-cli/v2/current/bin/aws_completer /usr/local/bin/aws_completer
 
 # Install tfk8s copying the binary from the gobinaries stage
 COPY --from=gobinaries /go/bin/tfk8s /usr/local/bin/tfk8s
