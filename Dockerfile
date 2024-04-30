@@ -89,12 +89,13 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint
-ENV TFLINT_VERSION v0.50.3
+ENV TFLINT_VERSION 0.50.3
 RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
-    curl -so /tmp/tflint_install.sh https://raw.githubusercontent.com/terraform-linters/tflint/${TFLINT_VERSION}/install_linux.sh && \
-    chmod +x /tmp/tflint_install.sh && \
-    /tmp/tflint_install.sh && \
-    rm -f /tmp/tflint_install.sh
+    curl -sLo /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip && \
+    unzip /tmp/tflint.zip && \
+    mv tflint /usr/local/bin/tflint && \
+    chmod +x /usr/local/bin/tflint && \
+    rm -f /tmp/tflint.zip
 
 # Ktail
 # https://github.com/atombender/ktail/releases
