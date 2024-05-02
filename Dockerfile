@@ -1,7 +1,7 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=473.0.0-alpine
+ARG CLOUD_SDK_VERSION=474.0.0-alpine
 ARG AWS_CLI_VERSION=2.15.42
 ARG ALPINE_VERSION=3.19
 # To fetch the right alpine version use:
