@@ -70,7 +70,7 @@ RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSIO
 # At the moment of writing it's not present an upgrade path from Terraform 1.9.x
 # Refs: https://opentofu.org/docs/intro/migration/
 ENV OPENTOFU_VERSION=1.7.3
-RUN echo "Installing OpenTofy ${OPENTOFU_VERSION}..." && \
+RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && \
     chmod +x install-opentofu.sh && \
     ./install-opentofu.sh  --install-method standalone --opentofu-version ${OPENTOFU_VERSION} && \
