@@ -21,7 +21,7 @@ function print-basic-auth() {
   echo "Discovering configured ingresses in namespace: ${CURRENT_NAMESPACE}"
 
   for INGRESS in $(kubectl --namespace "${CURRENT_NAMESPACE}" get ingresses -o jsonpath='{.items[*].metadata.name}'); do
-    FIRST_HOST=$(kubectl --namespace "${CURRENT_NAMESPACE}" get ingress "${INGRESS}" -o jsonpath="{.spec.rules[0].host}")
+    FIRST_HOST="https://$(kubectl --namespace "${CURRENT_NAMESPACE}" get ingress "${INGRESS}" -o jsonpath="{.spec.rules[0].host}")"
     SECRET=$(kubectl --namespace "${CURRENT_NAMESPACE}" get ingress "${INGRESS}" -o jsonpath="{.metadata.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-secret}")
     if [ -z "${SECRET}" ]; then
       echo "No auth secret found for ingress ${INGRESS} (${FIRST_HOST})"
