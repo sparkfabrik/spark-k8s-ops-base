@@ -17,7 +17,16 @@ kga() {
 function print-basic-auth() {
   local CURRENT_NAMESPACE INGRESS FIRST_HOST SECRET USERNAME PASSWORD
 
-  CURRENT_NAMESPACE="${1:-"$(kubectl config view --minify -o jsonpath="{..namespace}")"}"
+  CURRENT_NAMESPACE="${1:-}"
+  # If no namespace is provided, try to get the current one
+  if [ -z "${CURRENT_NAMESPACE}" ]; then
+    CURRENT_NAMESPACE="$(kubectl config view --minify -o jsonpath="{..namespace}")"
+    # If there is no current namespace, use 'default'
+    if [ -z "${CURRENT_NAMESPACE}" ]; then
+      CURRENT_NAMESPACE="default"
+    fi
+  fi
+
   echo "Discovering configured ingresses in namespace: ${CURRENT_NAMESPACE}"
 
   for INGRESS in $(kubectl --namespace "${CURRENT_NAMESPACE}" get ingresses -o jsonpath='{.items[*].metadata.name}'); do
@@ -28,6 +37,8 @@ function print-basic-auth() {
       echo "No auth secret found for ingress ${INGRESS} (${FIRST_HOST})"
       continue
     fi
+    # Remove the prefix from the secret name, if it is present
+    SECRET="$(echo "${SECRET}" | cut -d"/" -f1)"
     USERNAME=$(kubectl --namespace "${CURRENT_NAMESPACE}" get secret "${SECRET}" -o jsonpath="{.data.username}" | base64 -d)
     PASSWORD=$(kubectl --namespace "${CURRENT_NAMESPACE}" get secret "${SECRET}" -o jsonpath="{.data.password}" | base64 -d)
     if [ -z "${USERNAME}" ] || [ -z "${PASSWORD}" ]; then
