@@ -1,9 +1,9 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=483.0.0-alpine
-ARG AWS_CLI_VERSION=2.17.7
-ARG ALPINE_VERSION=3.20
+ARG CLOUD_SDK_VERSION=492.0.0-alpine
+ARG AWS_CLI_VERSION=2.17.44
+ARG ALPINE_VERSION=3.19
 
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
