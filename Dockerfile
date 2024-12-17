@@ -153,6 +153,12 @@ RUN echo "Installing helm ${HELM_VERSION}..." && \
     rm helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     rm -fr linux-${TARGETARCH}/
 
+# Helm plugins
+# Mapkubeapis https://github.com/helm/helm-mapkubeapis
+ENV HELM_PLUGIN_MAPKUBEAPIS_VERSION=v0.5.2
+RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}..." && \
+    helm plugin install --version ${HELM_PLUGIN_MAPKUBEAPIS_VERSION} https://github.com/helm/helm-mapkubeapis
+    
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
 ENV VELERO_VERSION=1.14.0
