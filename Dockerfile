@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=492.0.0-alpine
-ARG AWS_CLI_VERSION=2.17.44
+ARG CLOUD_SDK_VERSION=504.0.0-alpine
+ARG AWS_CLI_VERSION=2.22.18
 ARG ALPINE_VERSION=3.19
 
 # To fetch the right alpine version use:
@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.19
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
 # Build go binaries
-FROM golang:1.22.5-alpine3.20 AS gobinaries
+FROM golang:1.23.4-alpine3.20 AS gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION=0.1.10
@@ -158,7 +158,7 @@ RUN echo "Installing helm ${HELM_VERSION}..." && \
 ENV HELM_PLUGIN_MAPKUBEAPIS_VERSION=v0.5.2
 RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}..." && \
     helm plugin install --version ${HELM_PLUGIN_MAPKUBEAPIS_VERSION} https://github.com/helm/helm-mapkubeapis
-    
+
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
 ENV VELERO_VERSION=1.14.0
