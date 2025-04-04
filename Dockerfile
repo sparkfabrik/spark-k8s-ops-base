@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.19
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
 # Build go binaries
-FROM golang:1.23.6-alpine3.20 AS gobinaries
+FROM golang:1.24.2-alpine3.20 AS gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION=0.1.10
