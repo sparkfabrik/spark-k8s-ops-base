@@ -66,10 +66,9 @@ RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSIO
     chmod +x /usr/local/bin/kubectl
 
 # OpenTofu installation
-# NOTE: it is suggested to use the 1.7.x version as an upgrade path from Terraform 1.8.x.
-# At the moment of writing it's not present an upgrade path from Terraform 1.9.x
-# Refs: https://opentofu.org/docs/intro/migration/
-ENV OPENTOFU_VERSION=1.7.3
+# NOTE: When migrating from Terraform 1.8.x, please migrate to OpenTofu 1.8.2 first, then upgrade your OpenTofu installation to the latest version.
+# Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
+ENV OPENTOFU_VERSION=1.8.2
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && \
     chmod +x install-opentofu.sh && \
