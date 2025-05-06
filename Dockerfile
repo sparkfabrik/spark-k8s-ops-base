@@ -267,6 +267,13 @@ RUN wget -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VE
     chmod +x pluto && \
     mv pluto /usr/local/bin/pluto
 
+# Install Sveltosctl
+# https://github.com/projectsveltos/sveltosctl/releases
+ENV SVELTOSCTL_VERSION=0.53.0
+RUN wget -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
+    chmod +x sveltosctl && \
+    mv sveltosctl /usr/local/bin/sveltosctl
+
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
