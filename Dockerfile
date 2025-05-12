@@ -269,7 +269,7 @@ RUN wget -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VE
 
 # Install Sveltosctl
 # https://github.com/projectsveltos/sveltosctl/releases
-ENV SVELTOSCTL_VERSION=0.53.0
+ENV SVELTOSCTL_VERSION=0.54.0
 RUN wget -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
     mv sveltosctl /usr/local/bin/sveltosctl
