@@ -154,7 +154,7 @@ RUN echo "Installing helm ${HELM_VERSION}..." && \
 
 # Helm plugins
 # Mapkubeapis https://github.com/helm/helm-mapkubeapis
-ENV HELM_PLUGIN_MAPKUBEAPIS_VERSION=v0.5.2
+ENV HELM_PLUGIN_MAPKUBEAPIS_VERSION=v0.6.1
 RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}..." && \
     helm plugin install --version ${HELM_PLUGIN_MAPKUBEAPIS_VERSION} https://github.com/helm/helm-mapkubeapis
 
