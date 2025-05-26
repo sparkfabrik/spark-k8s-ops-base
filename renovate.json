@@ -55,7 +55,7 @@
         "/^Dockerfile$/"
       ],
       "matchStrings": [
-        "ENV\\s+KUBECTL_STABLE_VERSION=(?<currentValue>\\S+)"
+        "ENV\\s+KUBECTL_STABLE_VERSION=v?(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes/kubernetes"
