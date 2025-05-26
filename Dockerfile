@@ -202,17 +202,6 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
     curl -sL https://storage.googleapis.com/cloudsql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud_sql_proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
-# Kubeseal - Sealed Secrets
-# https://github.com/bitnami-labs/sealed-secrets/releases
-ENV KUBESEAL_VERSION=0.27.0
-RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
-    mkdir -p /tmp/kubeseal && \
-    curl -sLo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
-    tar -C /tmp/kubeseal -xzf /tmp/kubeseal/kubeseal.tar.gz && \
-    mv /tmp/kubeseal/kubeseal /usr/local/bin/kubeseal && \
-    chmod +x /usr/local/bin/kubeseal && \
-    rm -rf /tmp/kubeseal
-
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
 ENV TRIVY_VERSION=0.62.1
