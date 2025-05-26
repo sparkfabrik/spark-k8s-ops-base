@@ -173,7 +173,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION=0.32.5
+ENV K9S_VERSION=0.50.6
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
     curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
     tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
