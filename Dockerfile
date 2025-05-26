@@ -99,7 +99,7 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint/releases
-ENV TFLINT_VERSION=0.53.0
+ENV TFLINT_VERSION=0.58.0
 RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
     curl -sLo /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip && \
     unzip /tmp/tflint.zip && \
