@@ -204,7 +204,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 
 # Kubeseal - Sealed Secrets
 # https://github.com/bitnami-labs/sealed-secrets/releases
-ENV KUBESEAL_VERSION=0.27.0
+ENV KUBESEAL_VERSION=0.29.0
 RUN echo "Install kubeseal ${KUBESEAL_VERSION}..." && \
     mkdir -p /tmp/kubeseal && \
     curl -sLo /tmp/kubeseal/kubeseal.tar.gz https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-${TARGETARCH}.tar.gz && \
