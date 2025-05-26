@@ -70,10 +70,12 @@ RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSIO
 # Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
 ENV OPENTOFU_VERSION=1.8.2
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
-    curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh && \
-    chmod +x install-opentofu.sh && \
-    ./install-opentofu.sh  --install-method standalone --opentofu-version ${OPENTOFU_VERSION} && \
-    rm -f install-opentofu.sh
+    mkdir -p /tmp/tofu && \
+    curl -sLo /tmp/tofu/tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    tar -C /tmp/tofu -xzf /tmp/tofu/tofu.tar.gz && \
+    mv /tmp/tofu/tofu /usr/local/bin/tofu && \
+    chmod +x /usr/local/bin/tofu && \
+    rm -rf /tmp/tofu
 
 # Terraform and related tools installation.
 # Terraform cli
@@ -216,7 +218,8 @@ RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     mv /tmp/infracost-linux-${TARGETARCH} /usr/local/bin/infracost && \
-    chmod +x /usr/local/bin/infracost
+    chmod +x /usr/local/bin/infracost && \
+    rm -f /tmp/infracost-linux-${TARGETARCH}.tar.gz
 
 # Install Flux.
 # https://github.com/fluxcd/flux2/releases
