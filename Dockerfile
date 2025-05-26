@@ -231,7 +231,7 @@ RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
 
 # Install Flux.
 # https://github.com/fluxcd/flux2/releases
-ENV FLUXCD_VERSION=0.39.0
+ENV FLUXCD_VERSION=0.41.2
 RUN wget -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" -O flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
