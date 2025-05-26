@@ -183,7 +183,7 @@ RUN echo "Installing k9s ${K9S_VERSION}..." && \
 
 # Kube No Trouble - kubent.
 # https://github.com/doitintl/kube-no-trouble/releases
-ENV KUBENT_VERSION=0.7.2
+ENV KUBENT_VERSION=0.7.3
 RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
     curl -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO >/usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
