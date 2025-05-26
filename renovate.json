@@ -55,10 +55,11 @@
         "/^Dockerfile$/"
       ],
       "matchStrings": [
-        "ENV\\s+KUBECTL_STABLE_VERSION=v?(?<currentValue>\\S+)"
+        "ENV\\s+KUBECTL_STABLE_VERSION=(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "kubernetes/kubernetes"
+      "packageNameTemplate": "kubernetes/kubernetes",
+      "extractVersionTemplate": "^v(?<version>.*)$"
     },
     {
       "customType": "regex",
@@ -69,7 +70,7 @@
         "ENV\\s+OPENTOFU_VERSION=(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "github-releases",
-      "packageNameTemplate": "open-tofu/opentofu"
+      "packageNameTemplate": "opentofu/opentofu"
     },
     {
       "customType": "regex",
