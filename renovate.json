@@ -7,105 +7,163 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ARG\\s+CLOUD_SDK_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG\\s+CLOUD_SDK_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "docker",
       "packageNameTemplate": "eu.gcr.io/google.com/cloudsdktool/google-cloud-cli"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ARG\\s+AWS_CLI_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG\\s+AWS_CLI_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "docker",
       "packageNameTemplate": "ghcr.io/sparkfabrik/docker-alpine-aws-cli"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ARG\\s+ALPINE_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ARG\\s+ALPINE_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "docker",
       "packageNameTemplate": "alpine"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+TFK8S_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+TFK8S_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "jrhouston/tfk8s"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KUBECTL_STABLE_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KUBECTL_STABLE_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes/kubernetes"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+OPENTOFU_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+OPENTOFU_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "open-tofu/opentofu"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+TERRAFORM_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+TERRAFORM_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "hashicorp/terraform"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+TERRAFORM_DOCS_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+TERRAFORM_DOCS_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "terraform-docs/terraform-docs"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+TFLINT_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+TFLINT_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "terraform-linters/tflint"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KTAIL_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KTAIL_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "atombender/ktail"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KUBECTX_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KUBECTX_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "ahmetb/kubectx"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KUBETAIL_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KUBETAIL_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "johanhaleby/kubetail"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+STERN_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+STERN_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "stern/stern"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+HELM_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+HELM_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "helm/helm"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
       "matchStrings": [
         "ENV\\s+HELM_PLUGIN_MAPKUBEAPIS_VERSION=(?<currentValue>\\S+)"
       ],
@@ -114,85 +172,133 @@
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+VELERO_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+VELERO_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "vmware-tanzu/velero"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+K9S_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+K9S_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "derailed/k9s"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KUBENT_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KUBENT_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "doitintl/kube-no-trouble"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+CMCTL_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+CMCTL_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "cert-manager/cmctl"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+CLOUDSQL_PROXY_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+CLOUDSQL_PROXY_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "GoogleCloudPlatform/cloud-sql-proxy"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KUBESEAL_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KUBESEAL_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "bitnami-labs/sealed-secrets"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+TRIVY_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+TRIVY_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "aquasecurity/trivy"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+INFRACOST_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+INFRACOST_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "infracost/infracost"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+FLUXCD_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+FLUXCD_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "fluxcd/flux2"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+KREW_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KREW_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "kubernetes-sigs/krew"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+PLUTO_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+PLUTO_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "FairwindsOps/pluto"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^Dockerfile$"],
-      "matchStrings": ["ENV\\s+SVELTOSCTL_VERSION=(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+SVELTOSCTL_VERSION=(?<currentValue>\\S+)"
+      ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "projectsveltos/sveltosctl"
     }
