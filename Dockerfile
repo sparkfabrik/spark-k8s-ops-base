@@ -88,7 +88,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 
 # Terraform Docs
 # https://github.com/terraform-docs/terraform-docs/releases
-ENV TERRAFORM_DOCS_VERSION=0.18.0
+ENV TERRAFORM_DOCS_VERSION=0.20.0
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
     curl -sLo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
