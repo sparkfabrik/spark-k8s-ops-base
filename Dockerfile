@@ -132,7 +132,7 @@ RUN curl -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_V
 
 # Stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION=1.30.0
+ENV STERN_VERSION=1.32.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
