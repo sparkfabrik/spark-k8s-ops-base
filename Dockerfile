@@ -78,7 +78,7 @@ RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
 # Terraform and related tools installation.
 # Terraform cli
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION=1.8.5
+ENV TERRAFORM_VERSION=1.12.1
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
     curl -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
