@@ -146,7 +146,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION=3.18.0
+ENV HELM_VERSION=3.18.2
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
