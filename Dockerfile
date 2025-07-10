@@ -1,9 +1,9 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=504.0.1-alpine
-ARG AWS_CLI_VERSION=2.22.18
-ARG ALPINE_VERSION=3.19
+ARG CLOUD_SDK_VERSION=529.0.0-alpine
+ARG AWS_CLI_VERSION=2.25.6
+ARG ALPINE_VERSION=3.20
 
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.19
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
 # Build go binaries
-FROM golang:1.24.3-alpine3.20 AS gobinaries
+FROM golang:1.24-alpine AS gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION=0.1.10
@@ -60,7 +60,7 @@ ENV USE_GKE_GCLOUD_AUTH_PLUGIN=true
 
 # Install kubectl
 # https://console.cloud.google.com/storage/browser/kubernetes-release/release
-ENV KUBECTL_STABLE_VERSION=1.29
+ENV KUBECTL_STABLE_VERSION=1.31
 RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSION}..." && \
     curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s "https://storage.googleapis.com/kubernetes-release/release/stable-${KUBECTL_STABLE_VERSION}.txt")/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
@@ -146,7 +146,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION=3.18.3
+ENV HELM_VERSION=3.18.4
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -175,7 +175,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # k9s
 # @see https://github.com/derailed/k9s
 # https://github.com/derailed/k9s/releases
-ENV K9S_VERSION=0.50.6
+ENV K9S_VERSION=0.50.7
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
     curl -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
     tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
@@ -206,14 +206,14 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION=0.64.0
+ENV TRIVY_VERSION=0.64.1
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION=0.10.41
+ENV INFRACOST_VERSION=0.10.42
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -252,7 +252,7 @@ RUN kubectl krew install resource-capacity && \
 
 # Install pluto
 # https://github.com/FairwindsOps/pluto/releases
-ENV PLUTO_VERSION=5.21.7
+ENV PLUTO_VERSION=5.21.9
 RUN wget -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
