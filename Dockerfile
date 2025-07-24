@@ -68,7 +68,7 @@ RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSIO
 # OpenTofu installation
 # NOTE: When migrating from Terraform 1.8.x, please migrate to OpenTofu 1.8.2 first, then upgrade your OpenTofu installation to the latest version.
 # Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
-ENV OPENTOFU_VERSION=1.9.1
+ENV OPENTOFU_VERSION=1.10.3
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     mkdir -p /tmp/tofu && \
     curl -sLo /tmp/tofu/tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${TARGETARCH}.tar.gz && \
