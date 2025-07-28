@@ -1,7 +1,7 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=529.0.0-alpine
+ARG CLOUD_SDK_VERSION=531.0.0-alpine
 ARG AWS_CLI_VERSION=2.25.6
 ARG ALPINE_VERSION=3.20
 
@@ -265,6 +265,15 @@ ENV SVELTOSCTL_VERSION=0.57.2
 RUN wget -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
     mv sveltosctl /usr/local/bin/sveltosctl
+
+# Install Aliyun CLI
+# https://www.alibabacloud.com/help/en/cli/install-cli-on-linux
+RUN wget -q "https://aliyuncli.alicdn.com/aliyun-cli-linux-latest-${TARGETARCH}.tgz" -O /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz && \
+    tar -xzf /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz -C /tmp && \
+    test -f /tmp/aliyun && \
+    mv /tmp/aliyun /usr/local/bin/aliyun && \
+    chmod +x /usr/local/bin/aliyun && \
+    rm -rf /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz
 
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
