@@ -60,7 +60,7 @@ ENV USE_GKE_GCLOUD_AUTH_PLUGIN=true
 
 # Install kubectl
 # https://console.cloud.google.com/storage/browser/kubernetes-release/release
-ENV KUBECTL_STABLE_VERSION=1.31
+ENV KUBECTL_STABLE_VERSION=1.33.4
 RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSION}..." && \
     curl -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s "https://storage.googleapis.com/kubernetes-release/release/stable-${KUBECTL_STABLE_VERSION}.txt")/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
