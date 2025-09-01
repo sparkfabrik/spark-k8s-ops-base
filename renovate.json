@@ -302,6 +302,17 @@
       ],
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "projectsveltos/sveltosctl"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^Dockerfile$/"
+      ],
+      "matchStrings": [
+        "ENV\\s+KYVERNOCTL_VERSION=(?<currentValue>\\S+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "packageNameTemplate": "kyverno/kyverno"
     }
   ]
 }
