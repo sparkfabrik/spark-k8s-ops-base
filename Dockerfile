@@ -58,16 +58,15 @@ RUN chmod +x /usr/local/bin/tfk8s
 # Use the gke-auth-plugin to authenticate to the GKE cluster.
 ENV USE_GKE_GCLOUD_AUTH_PLUGIN=true
 
+# Centralized network tool flags
+ENV CURL_DEFAULT_FLAGS="--retry 3 --retry-delay 1 --retry-connrefused --max-time 20 --connect-timeout 15" \
+    WGET_DEFAULT_FLAGS="--retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 3"
 # Install kubectl
 # https://console.cloud.google.com/storage/browser/kubernetes-release/release
 ENV KUBECTL_STABLE_VERSION=1.31
 RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
-    -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -L -s "https://storage.googleapis.com/kubernetes-release/release/stable-${KUBECTL_STABLE_VERSION}.txt")/bin/linux/${TARGETARCH}/kubectl && \
+    curl ${CURL_DEFAULT_FLAGS} \
+    -so /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl ${CURL_DEFAULT_FLAGS} -L -s "https://storage.googleapis.com/kubernetes-release/release/stable-${KUBECTL_STABLE_VERSION}.txt")/bin/linux/${TARGETARCH}/kubectl && \
     chmod +x /usr/local/bin/kubectl
 
 # OpenTofu installation
@@ -76,11 +75,7 @@ RUN echo "Installing kubectl using the stable version of ${KUBECTL_STABLE_VERSIO
 ENV OPENTOFU_VERSION=1.9.1
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     mkdir -p /tmp/tofu && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sLo /tmp/tofu/tofu.tar.gz https://github.com/opentofu/opentofu/releases/download/v${OPENTOFU_VERSION}/tofu_${OPENTOFU_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -C /tmp/tofu -xzf /tmp/tofu/tofu.tar.gz && \
     mv /tmp/tofu/tofu /usr/local/bin/tofu && \
@@ -92,11 +87,7 @@ RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
 # https://releases.hashicorp.com/terraform/
 ENV TERRAFORM_VERSION=1.8.5
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
     unzip /tmp/terraform.zip && \
     mv terraform /usr/local/bin/terraform && \
@@ -108,11 +99,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 ENV TERRAFORM_DOCS_VERSION=0.20.0
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sLo /tmp/td/terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v${TERRAFORM_DOCS_VERSION}/terraform-docs-v${TERRAFORM_DOCS_VERSION}-$(uname)-${TARGETARCH}.tar.gz && \
     tar -C /tmp/td -xzf /tmp/td/terraform-docs.tar.gz && \
     mv /tmp/td/terraform-docs /usr/local/bin/terraform-docs && \
@@ -123,11 +110,7 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 # https://github.com/terraform-linters/tflint/releases
 ENV TFLINT_VERSION=0.58.1
 RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sLo /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip && \
     unzip /tmp/tflint.zip && \
     mv tflint /usr/local/bin/tflint && \
@@ -138,52 +121,28 @@ RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
 # https://github.com/atombender/ktail/releases
 ENV KTAIL_VERSION=1.4.0
 RUN echo "Installing ktail ${KTAIL_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://github.com/atombender/ktail/releases/download/v${KTAIL_VERSION}/ktail-linux-${TARGETARCH} -o /usr/local/bin/ktail && \
     chmod +x /usr/local/bin/ktail
 
 # kubectx and kubens utilities
 # https://github.com/ahmetb/kubectx
 ENV KUBECTX_VERSION=0.9.5
-RUN curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+RUN curl ${CURL_DEFAULT_FLAGS} \
     -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx -o /usr/local/bin/kubectx && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubens -o /usr/local/bin/kubens && \
     chmod +x /usr/local/bin/kubectx /usr/local/bin/kubens && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubectx.bash -o /etc/profile.d/kubectx.sh && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://raw.githubusercontent.com/ahmetb/kubectx/v${KUBECTX_VERSION}/completion/kubens.bash -o /etc/profile.d/kubens.sh && \
     chmod +x /etc/profile.d/kubectx.sh /etc/profile.d/kubens.sh
 
 # Kubetail
 # https://github.com/johanhaleby/kubetail
 ENV KUBETAIL_VERSION=1.6.20
-RUN curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+RUN curl ${CURL_DEFAULT_FLAGS} \
     -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_VERSION}/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
 
@@ -193,11 +152,7 @@ ENV STERN_VERSION=1.32.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sLO https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz && \
     mv stern /usr/local/bin/stern && \
@@ -208,11 +163,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 # https://github.com/helm/helm/releases
 ENV HELM_VERSION=3.18.6
 RUN echo "Installing helm ${HELM_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar -xzf helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp linux-${TARGETARCH}/helm /usr/local/bin/helm && \
@@ -231,11 +182,7 @@ ENV VELERO_VERSION=1.16.1
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sLO https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar zxvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /usr/local/bin/velero && \
@@ -247,11 +194,7 @@ RUN echo "Installing Velero ${VELERO_VERSION}..." && \
 # https://github.com/derailed/k9s/releases
 ENV K9S_VERSION=0.50.9
 RUN echo "Installing k9s ${K9S_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${TARGETARCH}.tar.gz -o k9s_Linux_${TARGETARCH}.tar.gz && \
     tar -xzf k9s_Linux_${TARGETARCH}.tar.gz && \
     rm k9s_Linux_${TARGETARCH}.tar.gz && \
@@ -262,11 +205,7 @@ RUN echo "Installing k9s ${K9S_VERSION}..." && \
 # https://github.com/doitintl/kube-no-trouble/releases
 ENV KUBENT_VERSION=0.7.3
 RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://github.com/doitintl/kube-no-trouble/releases/download/${KUBENT_VERSION}/kubent-${KUBENT_VERSION}-linux-${TARGETARCH}.tar.gz | tar -zxO >/usr/local/bin/kubent && \
     chmod +x /usr/local/bin/kubent
 
@@ -274,11 +213,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 # https://github.com/cert-manager/cmctl/releases
 ENV CMCTL_VERSION=2.3.0
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://github.com/cert-manager/cmctl/releases/download/v${CMCTL_VERSION}/cmctl_linux_${TARGETARCH} -o /usr/local/bin/cmctl && \
     chmod +x /usr/local/bin/cmctl
 
@@ -286,11 +221,7 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
 ENV CLOUDSQL_PROXY_VERSION=1.33.7
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sL https://storage.googleapis.com/cloudsql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud_sql_proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
@@ -298,11 +229,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 # https://github.com/aquasecurity/trivy/releases
 ENV TRIVY_VERSION=0.64.1
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
     trivy --version
 
@@ -310,11 +237,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 # https://github.com/infracost/infracost/releases
 ENV INFRACOST_VERSION=0.10.42
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
-    wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
+    wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     tar -C /tmp -xzf /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
     mv /tmp/infracost-linux-${TARGETARCH} /usr/local/bin/infracost && \
@@ -324,11 +247,7 @@ RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
 # Install Flux.
 # https://github.com/fluxcd/flux2/releases
 ENV FLUXCD_VERSION=0.39.0
-RUN wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
+RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/fluxcd/flux2/releases/download/v${FLUXCD_VERSION}/flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz" -O flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm flux_${FLUXCD_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -343,11 +262,7 @@ RUN set -x; cd "$(mktemp -d)" && \
     OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
     KREW="krew-${OS}_${ARCH}" && \
-    curl --retry 3 \
-    --retry-delay 1 \
-    --retry-connrefused \
-    --max-time 20 \
-    --connect-timeout 15 \
+    curl ${CURL_DEFAULT_FLAGS} \
     -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/${KREW}.tar.gz" && \
     tar zxvf "${KREW}.tar.gz" && \
     rm "${KREW}.tar.gz" && \
@@ -363,11 +278,7 @@ RUN kubectl krew install resource-capacity && \
 # Install pluto
 # https://github.com/FairwindsOps/pluto/releases
 ENV PLUTO_VERSION=5.21.9
-RUN wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
+RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     rm pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -377,11 +288,7 @@ RUN wget --retry-connrefused \
 # Install Sveltosctl
 # https://github.com/projectsveltos/sveltosctl/releases
 ENV SVELTOSCTL_VERSION=1.0.1
-RUN wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
+RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
     mv sveltosctl /usr/local/bin/sveltosctl
@@ -389,26 +296,21 @@ RUN wget --retry-connrefused \
 # Install Kyverno CLI
 # https://github.com/kyverno/kyverno/releases
 ENV KYVERNOCTL_VERSION=1.15.1
-RUN ARCH=$(echo "${TARGETARCH}" | sed 's/amd64/x86_64/') && \
-    echo "Installing Kyverno CLI version ${KYVERNOCTL_VERSION} for arch ${ARCH}" && \
-    wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
-    -q "https://github.com/kyverno/kyverno/releases/download/v${KYVERNOCTL_VERSION}/kyverno-cli_v${KYVERNOCTL_VERSION}_linux_${ARCH}.tar.gz" -O /tmp/kyverno-cli-linux-${ARCH}.tar.gz && \
-    tar -xzf /tmp/kyverno-cli-linux-${ARCH}.tar.gz -C /tmp && \
+RUN case "${TARGETARCH}" in \
+    amd64) KYVERNO_ARCH="x86_64" ;; \
+    arm64) KYVERNO_ARCH="arm64" ;; \
+    *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac && \
+    echo "Installing Kyverno CLI version ${KYVERNOCTL_VERSION} for arch ${KYVERNO_ARCH}" && \
+    wget ${WGET_DEFAULT_FLAGS} \
+    -q "https://github.com/kyverno/kyverno/releases/download/v${KYVERNOCTL_VERSION}/kyverno-cli_v${KYVERNOCTL_VERSION}_linux_${KYVERNO_ARCH}.tar.gz" -O /tmp/kyverno-cli-linux-${KYVERNO_ARCH}.tar.gz && \
+    tar -xzf /tmp/kyverno-cli-linux-${KYVERNO_ARCH}.tar.gz -C /tmp && \
     mv /tmp/kyverno /usr/local/bin/kyverno && \
     chmod +x /usr/local/bin/kyverno && \
-    rm -f /tmp/kyverno-cli-linux-${ARCH}.tar.gz
-
+    rm -f /tmp/kyverno-cli-linux-${KYVERNO_ARCH}.tar.gz
 # Install Aliyun CLI
 # https://www.alibabacloud.com/help/en/cli/install-cli-on-linux
-RUN wget --retry-connrefused \
-    --waitretry=1 \
-    --read-timeout=20 \
-    --timeout=15 \
-    -t 3 \
+RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://aliyuncli.alicdn.com/aliyun-cli-linux-latest-${TARGETARCH}.tgz" -O /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz && \
     tar -xzf /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz -C /tmp && \
     test -f /tmp/aliyun && \
