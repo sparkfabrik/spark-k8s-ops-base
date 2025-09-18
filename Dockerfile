@@ -347,7 +347,7 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     echo "source <(helm completion bash)" >>/etc/profile && \
     echo "source <(cmctl completion bash)" >>/etc/profile && \
     echo "source <(velero completion bash)" >>/etc/profile && \
-    echo "source <(pluto completion bash --no-footer)" >>/etc/profile && \
+    echo "source <(pluto completion bash)" >>/etc/profile && \
     echo "source <(kyverno completion bash)" >>/etc/profile
 
 # Set bash as default shell
