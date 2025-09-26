@@ -1,5 +1,5 @@
 # You can find the list of the available tags here:
-# https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/google-cloud-cli
+# https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
 ARG CLOUD_SDK_VERSION=531.0.0-alpine
 ARG AWS_CLI_VERSION=2.25.6
