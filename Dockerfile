@@ -39,7 +39,7 @@ ENV CLOUDSDK_COMPUTE_REGION=europe-west1-b
 RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
-    openssl git unzip mysql-client yq cosign
+    openssl git unzip mysql-client yq cosign postgresql16-client
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
