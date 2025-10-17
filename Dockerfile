@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=531.0.0-alpine
-ARG AWS_CLI_VERSION=2.25.6
+ARG CLOUD_SDK_VERSION=543.0.0-alpine
+ARG AWS_CLI_VERSION=2.31.17
 ARG ALPINE_VERSION=3.20
 
 # To fetch the right alpine version use:
@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.20
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
 # Build go binaries
-FROM golang:1.24-alpine AS gobinaries
+FROM golang:1.25-alpine AS gobinaries
 
 # https://github.com/jrhouston/tfk8s
 ENV TFK8S_VERSION=0.1.10
