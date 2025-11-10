@@ -39,7 +39,8 @@ ENV CLOUDSDK_COMPUTE_REGION=europe-west1-b
 RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
-    openssl git unzip mysql-client yq cosign postgresql16-client
+    openssl git unzip mysql-client yq cosign postgresql16-client \
+    mariadb-connector-c
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -223,10 +224,10 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 
 # Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-ENV CLOUDSQL_PROXY_VERSION=1.33.7
+ENV CLOUDSQL_PROXY_VERSION=2.19.0
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
-    -sL https://storage.googleapis.com/cloudsql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud_sql_proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
+    -sL https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud-sql-proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
     chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Trivy security scanner.
