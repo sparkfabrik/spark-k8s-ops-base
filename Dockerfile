@@ -282,7 +282,7 @@ RUN kubectl krew install resource-capacity && \
 
 # Install pluto
 # https://github.com/FairwindsOps/pluto/releases
-ENV PLUTO_VERSION=5.22.5
+ENV PLUTO_VERSION=5.22.6
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
