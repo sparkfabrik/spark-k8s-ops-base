@@ -146,7 +146,7 @@ RUN curl ${CURL_DEFAULT_FLAGS} \
 
 # Kubetail
 # https://github.com/johanhaleby/kubetail
-ENV KUBETAIL_VERSION=1.6.20
+ENV KUBETAIL_VERSION=1.6.21
 RUN curl ${CURL_DEFAULT_FLAGS} \
     -sL https://raw.githubusercontent.com/johanhaleby/kubetail/${KUBETAIL_VERSION}/kubetail -o /usr/local/bin/kubetail && \
     chmod +x /usr/local/bin/kubetail
