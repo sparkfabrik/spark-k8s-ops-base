@@ -64,7 +64,7 @@ ENV CURL_DEFAULT_FLAGS="--retry 3 --retry-delay 1 --retry-connrefused --max-time
     WGET_DEFAULT_FLAGS="--retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 3"
 
 # Install kubectl
-ENV KUBECTL_STABLE_VERSION=1.32
+ENV KUBECTL_STABLE_VERSION=1.33
 RUN STABLE_VERSION=$(curl ${CURL_DEFAULT_FLAGS} -fsSL "https://dl.k8s.io/release/stable-${KUBECTL_STABLE_VERSION}.txt") && \
     echo "Installing kubectl ${STABLE_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${STABLE_VERSION}/bin/linux/${TARGETARCH}/kubectl" && \
