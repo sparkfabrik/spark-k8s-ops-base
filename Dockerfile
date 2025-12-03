@@ -240,7 +240,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION=0.10.42
+ENV INFRACOST_VERSION=0.10.43
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
