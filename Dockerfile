@@ -106,7 +106,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 
 # Terraform Docs
 # https://github.com/terraform-docs/terraform-docs/releases
-ENV TERRAFORM_DOCS_VERSION=0.20.0
+ENV TERRAFORM_DOCS_VERSION=0.21.0
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
     curl ${CURL_DEFAULT_FLAGS} \
