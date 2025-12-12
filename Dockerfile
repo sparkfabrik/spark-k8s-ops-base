@@ -237,7 +237,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION=0.67.2
+ENV TRIVY_VERSION=0.68.1
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
