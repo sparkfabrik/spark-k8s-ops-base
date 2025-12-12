@@ -11,11 +11,16 @@ ARG ALPINE_VERSION=3.20
 
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
-# Build go binaries
+# Build go binaries for the target architecture
 FROM golang:1.25-alpine AS gobinaries
 
+ARG TARGETOS
+ARG TARGETARCH
+
 # https://github.com/jrhouston/tfk8s
-ENV TFK8S_VERSION=0.1.10
+ENV TFK8S_VERSION=0.1.10 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH}
 RUN apk --no-cache add git && \
     go install github.com/jrhouston/tfk8s@v${TFK8S_VERSION}
 
