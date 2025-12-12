@@ -229,7 +229,7 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 
 # Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-ENV CLOUDSQL_PROXY_VERSION=2.19.0
+ENV CLOUDSQL_PROXY_VERSION=2.20.0
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sL https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud-sql-proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
