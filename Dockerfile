@@ -305,7 +305,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install Kyverno CLI
 # https://github.com/kyverno/kyverno/releases
-ENV KYVERNOCTL_VERSION=1.15.1
+ENV KYVERNOCTL_VERSION=1.16.1
 RUN case "${TARGETARCH}" in \
     amd64) KYVERNO_ARCH="x86_64" ;; \
     arm64) KYVERNO_ARCH="arm64" ;; \
