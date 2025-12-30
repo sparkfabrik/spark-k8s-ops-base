@@ -82,7 +82,7 @@ RUN STABLE_VERSION=$(curl ${CURL_DEFAULT_FLAGS} -fsSL "https://dl.k8s.io/release
 # OpenTofu installation
 # NOTE: When migrating from Terraform 1.8.x, please migrate to OpenTofu 1.8.2 first, then upgrade your OpenTofu installation to the latest version.
 # Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
-ENV OPENTOFU_VERSION=1.9.1
+ENV OPENTOFU_VERSION=1.11.2
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     mkdir -p /tmp/tofu && \
     curl ${CURL_DEFAULT_FLAGS} \
