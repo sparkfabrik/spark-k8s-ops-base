@@ -2,7 +2,7 @@
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
 ARG CLOUD_SDK_VERSION=543.0.0-alpine
-ARG AWS_CLI_VERSION=2.31.17
+ARG AWS_CLI_VERSION=2.33.2
 ARG ALPINE_VERSION=3.20
 
 # To fetch the right alpine version use:
@@ -329,6 +329,18 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
     chmod +x /usr/local/bin/aliyun && \
     rm -rf /tmp/aliyun-cli-linux-latest-${TARGETARCH}.tgz
 
+# Install GitHub CLI
+# https://github.com/cli/cli/releases
+ENV GH_CLI_VERSION=2.85.0
+RUN wget ${WGET_DEFAULT_FLAGS} \
+    -q "https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz" -O /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    tar -xzf /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz -C /tmp && \
+    test -f /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}/bin/gh && \
+    mv /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}/bin/gh /usr/local/bin/gh && \
+    chmod +x /usr/local/bin/gh && \
+    rm -rf /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz && \
+    rm -rf /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}/
+
 # Copy alias functions
 COPY bash_functions.sh /etc/profile.d/bash_functions.sh
 RUN chmod +x /etc/profile.d/bash_functions.sh
@@ -359,7 +371,8 @@ RUN echo "PS1='\[\033[1;36m\]\u\[\033[1;31m\]@\[\033[1;32m\]\h:\[\033[1;35m\]\w\
     echo "source <(cmctl completion bash)" >>/etc/profile && \
     echo "source <(velero completion bash)" >>/etc/profile && \
     echo "source <(pluto completion bash)" >>/etc/profile && \
-    echo "source <(kyverno completion bash)" >>/etc/profile
+    echo "source <(kyverno completion bash)" >>/etc/profile && \
+    echo "source <(gh completion -s bash)" >>/etc/profile
 
 # Set bash as default shell
 CMD [ "/bin/bash" ]
