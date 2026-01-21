@@ -297,7 +297,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install Sveltosctl
 # https://github.com/projectsveltos/sveltosctl/releases
-ENV SVELTOSCTL_VERSION=1.2.1
+ENV SVELTOSCTL_VERSION=1.4.0
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
