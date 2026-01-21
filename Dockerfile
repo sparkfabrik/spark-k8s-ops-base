@@ -188,7 +188,7 @@ RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}.
 
 # Velero.
 # https://github.com/vmware-tanzu/velero/releases
-ENV VELERO_VERSION=1.16.1
+ENV VELERO_VERSION=1.17.2
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
