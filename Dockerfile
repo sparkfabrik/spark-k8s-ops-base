@@ -221,7 +221,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 
 # Cert Manager CLI - cmctl
 # https://github.com/cert-manager/cmctl/releases
-ENV CMCTL_VERSION=2.4.0
+ENV CMCTL_VERSION=2.4.1
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://github.com/cert-manager/cmctl/releases/download/v${CMCTL_VERSION}/cmctl_linux_${TARGETARCH} -o /usr/local/bin/cmctl && \
