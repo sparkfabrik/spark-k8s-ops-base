@@ -267,7 +267,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 # Install Krew - kubectl plugin manager
 # https://github.com/kubernetes-sigs/krew/releases
 # https://krew.sigs.k8s.io/docs/user-guide/setup/install/
-ENV KREW_VERSION=0.4.5
+ENV KREW_VERSION=0.5.0
 RUN set -x; cd "$(mktemp -d)" && \
     OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
