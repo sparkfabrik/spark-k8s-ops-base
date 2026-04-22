@@ -1,7 +1,7 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=543.0.0-alpine
+ARG CLOUD_SDK_VERSION=565.0.0-alpine
 ARG AWS_CLI_VERSION=2.31.17
 ARG ALPINE_VERSION=3.20
 
@@ -45,7 +45,7 @@ RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
     openssl git unzip mysql-client yq cosign postgresql16-client \
-    mariadb-connector-c
+    mariadb-connector-c just
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -82,7 +82,7 @@ RUN STABLE_VERSION=$(curl ${CURL_DEFAULT_FLAGS} -fsSL "https://dl.k8s.io/release
 # OpenTofu installation
 # NOTE: When migrating from Terraform 1.8.x, please migrate to OpenTofu 1.8.2 first, then upgrade your OpenTofu installation to the latest version.
 # Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
-ENV OPENTOFU_VERSION=1.9.1
+ENV OPENTOFU_VERSION=1.11.6
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     mkdir -p /tmp/tofu && \
     curl ${CURL_DEFAULT_FLAGS} \
