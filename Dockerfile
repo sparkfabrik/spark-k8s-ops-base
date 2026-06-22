@@ -188,13 +188,13 @@ RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}.
     helm plugin install --version ${HELM_PLUGIN_MAPKUBEAPIS_VERSION} https://github.com/helm/helm-mapkubeapis
 
 # Velero.
-# https://github.com/vmware-tanzu/velero/releases
+# https://github.com/velero-io/velero/releases
 ENV VELERO_VERSION=1.18.1
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
     curl ${CURL_DEFAULT_FLAGS} \
-    -sLO https://github.com/heptio/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
+    -sLO https://github.com/velero-io/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     tar zxvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
     cp velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /usr/local/bin/velero && \
     chmod +x /usr/local/bin/velero && \
