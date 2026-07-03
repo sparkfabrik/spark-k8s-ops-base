@@ -17,11 +17,32 @@ permissions:
   packages: write
 
 jobs:
+  # Resolve "is this the release branch?" once, from env.RELEASE_BRANCH, and
+  # expose it as an output. Job-level `if` cannot read the `env` context but can
+  # read `needs`, so downstream jobs gate on this single source of truth instead
+  # of each hardcoding the branch name.
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      is_release: ${{ steps.check.outputs.is_release }}
+    steps:
+      - id: check
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          if [ "${REF}" = "refs/heads/${RELEASE_BRANCH}" ]; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
   # Build every architecture on a native runner in parallel (no QEMU emulation).
-  # On master each arch is pushed by digest; the merge job assembles the final
-  # multi-arch manifest. On pull requests the build is validated only
+  # On the release branch each arch is pushed by digest; the merge job assembles
+  # the final multi-arch manifest. On pull requests the build is validated only
   # (type=cacheonly) and nothing is pushed.
   build:
+    needs: prepare
     runs-on: ${{ matrix.platform.runner }}
     name: build (${{ matrix.platform.arch }})
     strategy:
@@ -46,9 +67,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
 
-      # Login is only needed when we push by digest (master).
+      # Login is only needed when we push by digest (release branch).
       - name: Log in to the Container registry
-        if: github.ref == format('refs/heads/{0}', env.RELEASE_BRANCH)
+        if: needs.prepare.outputs.is_release == 'true'
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -58,9 +79,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      # On master: build single-arch and push by digest (no tag); the merge job
-      # assembles the final multi-arch tags from the per-arch digests.
-      # On pull requests: build for this arch and keep it in the cache only.
+      # On the release branch: build single-arch and push by digest (no tag);
+      # the merge job assembles the final multi-arch tags from the per-arch
+      # digests. On pull requests: build for this arch and keep it in the cache.
       - name: Build image
         id: build
         uses: docker/build-push-action@v7
@@ -70,18 +91,23 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.platform.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.platform.arch }}
-          outputs: ${{ github.ref == format('refs/heads/{0}', env.RELEASE_BRANCH) && format('type=image,name={0}/{1}/{2},push-by-digest=true,name-canonical=true,push=true', env.REGISTRY, github.repository_owner, env.IMAGE_NAME) || 'type=cacheonly' }}
+          outputs: ${{ needs.prepare.outputs.is_release == 'true' && format('type=image,name={0}/{1}/{2},push-by-digest=true,name-canonical=true,push=true', env.REGISTRY, github.repository_owner, env.IMAGE_NAME) || 'type=cacheonly' }}
 
       - name: Export digest
-        if: github.ref == format('refs/heads/{0}', env.RELEASE_BRANCH)
+        if: needs.prepare.outputs.is_release == 'true'
         run: |
-          mkdir -p "${{ runner.temp }}/digests"
+          set -euo pipefail
           digest="${{ steps.build.outputs.digest }}"
+          if [ -z "${digest}" ]; then
+            echo "::error::build step did not produce a digest" >&2
+            exit 1
+          fi
+          mkdir -p "${{ runner.temp }}/digests"
           # The filename is the bare digest; the merge job reconstructs the ref.
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Upload digest
-        if: github.ref == format('refs/heads/{0}', env.RELEASE_BRANCH)
+        if: needs.prepare.outputs.is_release == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.platform.arch }}
@@ -90,12 +116,10 @@ jobs:
           retention-days: 1
 
   # Assemble the multi-arch manifest from the per-arch digests and apply the
-  # final tags. Runs on master only.
+  # final tags. Runs on the release branch only.
   merge:
-    needs: build
-    # Job-level `if` cannot read the `env` context, so the release branch is
-    # spelled out here; keep it in sync with env.RELEASE_BRANCH.
-    if: github.ref == 'refs/heads/master'
+    needs: [prepare, build]
+    if: needs.prepare.outputs.is_release == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Download digests
@@ -121,14 +145,23 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           tags: |
-            # set latest tag for main branch
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', env.RELEASE_BRANCH) }}
+            # set latest tag for the release branch
+            type=raw,value=latest,enable=${{ needs.prepare.outputs.is_release == 'true' }}
             # set sha tag
             type=sha,format=long,prefix=
 
       - name: Create and push multi-arch manifest
         working-directory: ${{ runner.temp }}/digests
         run: |
+          set -euo pipefail
+          shopt -s nullglob
+          # Fail loudly if the digests were not downloaded, instead of assembling
+          # an incomplete or empty manifest.
+          refs=( * )
+          if [ "${#refs[@]}" -eq 0 ]; then
+            echo "::error::no digest files found; expected one per architecture" >&2
+            exit 1
+          fi
           # Intentional word splitting: the -t flags and the per-arch refs must
           # each expand into separate arguments to imagetools create.
           # shellcheck disable=SC2046
@@ -138,5 +171,6 @@ jobs:
 
       - name: Inspect image
         run: |
+          set -euo pipefail
           docker buildx imagetools inspect \
             "${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}"
