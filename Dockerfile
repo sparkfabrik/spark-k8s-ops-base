@@ -1,9 +1,9 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=573.0.0-alpine
-ARG AWS_CLI_VERSION=2.33.2
-ARG ALPINE_VERSION=3.20
+ARG CLOUD_SDK_VERSION=575.0.0-alpine
+ARG AWS_CLI_VERSION=2.35.15
+ARG ALPINE_VERSION=3.23
 
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
@@ -45,7 +45,7 @@ RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
     openssl git unzip mysql-client yq cosign postgresql16-client \
-    mariadb-connector-c just
+    mariadb-connector-c just bind-tools
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -189,7 +189,7 @@ RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}.
 
 # Velero.
 # https://github.com/velero-io/velero/releases
-ENV VELERO_VERSION=1.18.1
+ENV VELERO_VERSION=1.18.2
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
@@ -238,7 +238,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION=0.71.2
+ENV TRIVY_VERSION=0.72.0
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
@@ -246,7 +246,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION=0.10.44
+ENV INFRACOST_VERSION=0.10.45
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -298,7 +298,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install Sveltosctl
 # https://github.com/projectsveltos/sveltosctl/releases
-ENV SVELTOSCTL_VERSION=1.11.1
+ENV SVELTOSCTL_VERSION=1.12.0
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
@@ -332,7 +332,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install GitHub CLI
 # https://github.com/cli/cli/releases
-ENV GH_CLI_VERSION=2.95.0
+ENV GH_CLI_VERSION=2.96.0
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz" -O /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xzf /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz -C /tmp && \
