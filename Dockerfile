@@ -2,8 +2,8 @@
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
 ARG CLOUD_SDK_VERSION=575.0.0-alpine
-ARG AWS_CLI_VERSION=2.33.2
-ARG ALPINE_VERSION=3.20
+ARG AWS_CLI_VERSION=2.35.15
+ARG ALPINE_VERSION=3.23
 
 # To fetch the right alpine version use:
 # docker run --rm --entrypoint ash eu.gcr.io/google.com/cloudsdktool/google-cloud-cli:${CLOUD_SDK_VERSION} -c 'cat /etc/issue'
