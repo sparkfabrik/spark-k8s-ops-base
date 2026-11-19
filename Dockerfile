@@ -1,8 +1,8 @@
 # You can find the list of the available tags here:
 # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/google-cloud-cli
 
-ARG CLOUD_SDK_VERSION=575.0.0-alpine
-ARG AWS_CLI_VERSION=2.35.15
+ARG CLOUD_SDK_VERSION=594.0.0-alpine
+ARG AWS_CLI_VERSION=2.41.1
 ARG ALPINE_VERSION=3.23
 
 # To fetch the right alpine version use:
@@ -12,7 +12,7 @@ ARG ALPINE_VERSION=3.23
 FROM ghcr.io/sparkfabrik/docker-alpine-aws-cli:${AWS_CLI_VERSION}-alpine${ALPINE_VERSION} AS awscli
 
 # Build go binaries for the target architecture
-FROM golang:1.26-alpine AS gobinaries
+FROM golang:1.27-alpine AS gobinaries
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -45,7 +45,7 @@ RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
     openssl git unzip mysql-client yq cosign postgresql16-client \
-    mariadb-connector-c just bind-tools
+    mariadb-connector-c just bind-tools su-exec
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -69,7 +69,7 @@ ENV CURL_DEFAULT_FLAGS="--retry 3 --retry-delay 1 --retry-connrefused --max-time
     WGET_DEFAULT_FLAGS="--retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 -t 3"
 
 # Install kubectl
-ENV KUBECTL_STABLE_VERSION=1.34
+ENV KUBECTL_STABLE_VERSION=1.37
 RUN STABLE_VERSION=$(curl ${CURL_DEFAULT_FLAGS} -fsSL "https://dl.k8s.io/release/stable-${KUBECTL_STABLE_VERSION}.txt") && \
     echo "Installing kubectl ${STABLE_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${STABLE_VERSION}/bin/linux/${TARGETARCH}/kubectl" && \
@@ -83,7 +83,7 @@ RUN STABLE_VERSION=$(curl ${CURL_DEFAULT_FLAGS} -fsSL "https://dl.k8s.io/release
 # NOTE: When migrating from Terraform 1.8.x, please migrate to OpenTofu 1.8.2 first, then upgrade your OpenTofu installation to the latest version.
 # Refs: https://opentofu.org/docs/intro/migration/terraform-1.8/
 # https://github.com/opentofu/opentofu/releases
-ENV OPENTOFU_VERSION=1.12.3
+ENV OPENTOFU_VERSION=1.13.9
 RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
     mkdir -p /tmp/tofu && \
     curl ${CURL_DEFAULT_FLAGS} \
@@ -96,7 +96,7 @@ RUN echo "Installing OpenTofu ${OPENTOFU_VERSION}..." && \
 # Terraform and related tools installation.
 # Terraform cli
 # https://releases.hashicorp.com/terraform/
-ENV TERRAFORM_VERSION=1.15.8
+ENV TERRAFORM_VERSION=1.17.2
 RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -so /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${TARGETARCH}.zip && \
@@ -107,7 +107,7 @@ RUN echo "Installing Terraform ${TERRAFORM_VERSION}..." && \
 
 # Terraform Docs
 # https://github.com/terraform-docs/terraform-docs/releases
-ENV TERRAFORM_DOCS_VERSION=0.24.0
+ENV TERRAFORM_DOCS_VERSION=0.25.1
 RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
     mkdir -p /tmp/td && \
     curl ${CURL_DEFAULT_FLAGS} \
@@ -119,7 +119,7 @@ RUN echo "Install Terraform Docs ${TERRAFORM_DOCS_VERSION}..." && \
 
 # Install tflint Terraform Linter
 # https://github.com/terraform-linters/tflint/releases
-ENV TFLINT_VERSION=0.63.1
+ENV TFLINT_VERSION=0.66.0
 RUN echo "Installing tflint Terraform linter ${TFLINT_VERSION}" && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sLo /tmp/tflint.zip https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_${TARGETARCH}.zip && \
@@ -159,7 +159,7 @@ RUN curl ${CURL_DEFAULT_FLAGS} \
 
 # Stern
 # https://github.com/stern/stern/releases
-ENV STERN_VERSION=1.34.0
+ENV STERN_VERSION=1.35.0
 RUN echo "Installing stern ${STERN_VERSION}..." && \
     mkdir /tmp/stern && \
     cd /tmp/stern && \
@@ -172,7 +172,7 @@ RUN echo "Installing stern ${STERN_VERSION}..." && \
 
 # Helm
 # https://github.com/helm/helm/releases
-ENV HELM_VERSION=3.21.2
+ENV HELM_VERSION=3.22.1
 RUN echo "Installing helm ${HELM_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz -o helm-v${HELM_VERSION}-linux-${TARGETARCH}.tar.gz && \
@@ -189,7 +189,7 @@ RUN echo "Installing Helm plugin Mapkubeapis ${HELM_PLUGIN_MAPKUBEAPIS_VERSION}.
 
 # Velero.
 # https://github.com/velero-io/velero/releases
-ENV VELERO_VERSION=1.18.2
+ENV VELERO_VERSION=1.18.4
 RUN echo "Installing Velero ${VELERO_VERSION}..." && \
     mkdir -p /velero && \
     cd /velero && \
@@ -222,7 +222,7 @@ RUN echo "Installing kubent ${KUBENT_VERSION}..." && \
 
 # Cert Manager CLI - cmctl
 # https://github.com/cert-manager/cmctl/releases
-ENV CMCTL_VERSION=2.5.0
+ENV CMCTL_VERSION=2.6.2
 RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://github.com/cert-manager/cmctl/releases/download/v${CMCTL_VERSION}/cmctl_linux_${TARGETARCH} -o /usr/local/bin/cmctl && \
@@ -230,7 +230,7 @@ RUN echo "Installing cmctl ${CMCTL_VERSION}..." && \
 
 # Cloud SQL Auth Proxy
 # https://github.com/GoogleCloudPlatform/cloud-sql-proxy/releases
-ENV CLOUDSQL_PROXY_VERSION=2.20.0
+ENV CLOUDSQL_PROXY_VERSION=2.28.0
 RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sL https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v${CLOUDSQL_PROXY_VERSION}/cloud-sql-proxy.linux.${TARGETARCH} -o /usr/local/bin/cloud_sql_proxy && \
@@ -238,7 +238,7 @@ RUN echo "Install Cloud SQL Auth Proxy version ${CLOUDSQL_PROXY_VERSION}..." && 
 
 # Trivy security scanner.
 # https://github.com/aquasecurity/trivy/releases
-ENV TRIVY_VERSION=0.72.0
+ENV TRIVY_VERSION=0.76.2
 RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
     curl ${CURL_DEFAULT_FLAGS} \
     -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- v${TRIVY_VERSION} && \
@@ -246,7 +246,7 @@ RUN echo "Installing Trivy ${TRIVY_VERSION}..." && \
 
 # Infracost - Terraform cost estimation.
 # https://github.com/infracost/infracost/releases
-ENV INFRACOST_VERSION=0.10.45
+ENV INFRACOST_VERSION=0.10.50
 RUN echo "Installing Infracost ${INFRACOST_VERSION}..." && \
     wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/infracost/infracost/releases/download/v${INFRACOST_VERSION}/infracost-linux-${TARGETARCH}.tar.gz" -O /tmp/infracost-linux-${TARGETARCH}.tar.gz && \
@@ -288,7 +288,7 @@ RUN kubectl krew install resource-capacity && \
 
 # Install pluto
 # https://github.com/FairwindsOps/pluto/releases
-ENV PLUTO_VERSION=5.24.0
+ENV PLUTO_VERSION=5.24.5
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" -O pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xvf pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz && \
@@ -298,7 +298,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install Sveltosctl
 # https://github.com/projectsveltos/sveltosctl/releases
-ENV SVELTOSCTL_VERSION=1.12.0
+ENV SVELTOSCTL_VERSION=1.17.0
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/projectsveltos/sveltosctl/releases/download/v${SVELTOSCTL_VERSION}/sveltosctl-linux-${TARGETARCH}" -O sveltosctl && \
     chmod +x sveltosctl && \
@@ -306,7 +306,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install Kyverno CLI
 # https://github.com/kyverno/kyverno/releases
-ENV KYVERNOCTL_VERSION=1.17.1
+ENV KYVERNOCTL_VERSION=1.20.0
 RUN case "${TARGETARCH}" in \
     amd64) KYVERNO_ARCH="x86_64" ;; \
     arm64) KYVERNO_ARCH="arm64" ;; \
@@ -332,7 +332,7 @@ RUN wget ${WGET_DEFAULT_FLAGS} \
 
 # Install GitHub CLI
 # https://github.com/cli/cli/releases
-ENV GH_CLI_VERSION=2.96.0
+ENV GH_CLI_VERSION=2.105.0
 RUN wget ${WGET_DEFAULT_FLAGS} \
     -q "https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz" -O /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz && \
     tar -xzf /tmp/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz -C /tmp && \
