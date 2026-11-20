@@ -41,11 +41,13 @@ ENV CLOUDSDK_COMPUTE_REGION=europe-west1-b
 
 # Install additional components.
 # NOTES: cosign is needed to install OpenTofu.
+# NOTES: python3 and py3-pip are installed explicitly because the gcloud alpine
+# base image no longer ships a system python3 (only its bundled interpreter).
 RUN apk --no-cache add vim tmux curl wget less make bash \
     bash-completion util-linux pciutils usbutils coreutils binutils \
     findutils grep gettext docker mandoc ncurses jq bat \
     openssl git unzip mysql-client yq cosign postgresql16-client \
-    mariadb-connector-c just bind-tools su-exec
+    mariadb-connector-c just bind-tools su-exec python3 py3-pip
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
